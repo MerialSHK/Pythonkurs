@@ -589,6 +589,7 @@ button {
     border-radius: var(--radius-sm);
     font-size: 13px;
     line-height: 1.5;
+    white-space: pre-wrap;
 }
 
 .legend-card {
@@ -651,6 +652,58 @@ button {
 .target-card pre::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 4px; }
 .target-card pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 4px; }
 .target-card pre::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.28); }
+
+.hint-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+}
+
+.solution-card {
+    background: var(--surface);
+    border: 1.5px solid var(--success);
+    border-radius: var(--radius-md);
+    padding: 14px 16px 16px;
+}
+
+.solution-card-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+}
+
+.solution-card-header h4 {
+    margin: 0;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--success);
+}
+
+.solution-card pre {
+    margin: 0;
+    padding: 12px 14px;
+    background: #0f1320;
+    color: #e7ecf7;
+    border-radius: var(--radius-sm);
+    font-family: var(--mono);
+    font-size: 12.5px;
+    line-height: 1.55;
+    white-space: pre;
+    overflow-x: auto;
+    overflow-y: auto;
+    max-height: 320px;
+    tab-size: 4;
+    user-select: text;
+}
+
+.solution-card pre::-webkit-scrollbar { height: 8px; width: 8px; }
+.solution-card pre::-webkit-scrollbar-track { background: rgba(255,255,255,.05); border-radius: 4px; }
+.solution-card pre::-webkit-scrollbar-thumb { background: rgba(255,255,255,.18); border-radius: 4px; }
+.solution-card pre::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,.28); }
 
 /* ===== EDITOR ===== */
 .editor-panel {

@@ -49,10 +49,18 @@
                         <p>Der Code erstellt einen Text auf dem Bildschirm. Wenn du fertig bist, drücke <code>Enter</code> oder klicke <code>Ausführen</code>.</p>
                         <p><strong>Tipp:</strong> Achte auf Anführungszeichen <code>'</code>, Kommas <code>,</code> und Klammern <code>(</code> <code>)</code>.</p>
                     `,
-                    hint: 'Du musst exakt jedes Zeichen abtippen. Auch die Leerzeichen und das Komma am Ende einer Zeile sind wichtig.',
+                    hint: `So gehst du Schritt für Schritt vor:
+1) Klick zuerst in den Editor (mittlere Spalte).
+2) Tippe genau das ab, was in der Karte „Code zum Abtippen" steht.
+3) Achte auf jedes Zeichen: ' ' (Anführungszeichen), , (Kommas), ( ) (Klammern), = (Gleichheitszeichen).
+4) Zwischen den beiden Zeilen ist eine LEERE Zeile (zweimal Enter).
+5) Wenn unten der Text grün wird → Enter drücken oder „Ausführen" klicken.`,
                     mode: 'type',
                     initialCode: '',
                     targetCode: `titel = play.new_text(words='Hallo Welt', x=0, y=120, font_size=42, color='blue')\n\nuntertitel = play.new_text(words='Mein erstes Programm', x=0, y=60, font_size=20, color='gray')`,
+                    solution: `titel = play.new_text(words='Hallo Welt', x=0, y=120, font_size=42, color='blue')
+
+untertitel = play.new_text(words='Mein erstes Programm', x=0, y=60, font_size=20, color='gray')`,
                     validate: ({ studentCode, state, error }) => {
                         if (error) return { ok: false, message: error.message || String(error) };
                         const target = `titel = play.new_text(words='Hallo Welt', x=0, y=120, font_size=42, color='blue')\n\nuntertitel = play.new_text(words='Mein erstes Programm', x=0, y=60, font_size=20, color='gray')`;
@@ -93,12 +101,24 @@
                         <pre>kreis = play.new_circle(color='blue', x=-180, y=0, radius=40)
 box = play.new_box(color='red', x=180, y=0, width=80, height=80)</pre>
                     `,
-                    hint: 'Schreibe alle drei Zeilen unter den Titel. Du brauchst genau einen Text mit dem Namen spieler, einen Kreis namens kreis und eine Box namens box.',
+                    hint: `So baust du es Stück für Stück:
+1) Schreibe unter den Titel: spieler = play.new_text(words='O_O', x=0, y=0, font_size=60, color='black')
+2) Eine Zeile drunter: kreis = play.new_circle(color='blue', x=-180, y=0, radius=40)
+3) Wieder eine Zeile drunter: box = play.new_box(color='red', x=180, y=0, width=80, height=80)
+4) Variablen-Namen MÜSSEN exakt 'spieler', 'kreis' und 'box' heißen — sonst findet die Pruefung sie nicht.
+5) Klick „Ausführen".`,
                     mode: 'fill',
                     initialCode:
 `titel = play.new_text(words='Mein Spielfeld', x=0, y=180, font_size=28, color='blue')
 
 # Schreibe deinen Code hier:
+`,
+                    solution:
+`titel = play.new_text(words='Mein Spielfeld', x=0, y=180, font_size=28, color='blue')
+
+spieler = play.new_text(words='O_O', x=0, y=0, font_size=60, color='black')
+kreis = play.new_circle(color='blue', x=-180, y=0, radius=40)
+box = play.new_box(color='red', x=180, y=0, width=80, height=80)
 `,
                     validate: ({ studentCode, state, error }) => {
                         if (error) return { ok: false, message: error.message || String(error) };
@@ -157,7 +177,11 @@ box = play.new_box(color='red', x=180, y=0, width=80, height=80)</pre>
                         </ul>
                         <p>Klicke nach dem Ausführen ins Spielfeld und drücke die Pfeiltasten.</p>
                     `,
-                    hint: 'Du brauchst vier if-Bedingungen. Vergiss die 4 Leerzeichen am Anfang der Bewegungs-Zeile nicht (Einrückung).',
+                    hint: `Schreibe noch DREI weitere if-Blöcke unter den ersten:
+1) if play.key_is_pressed('down'):  →  in der Zeile drunter mit 8 Leerzeichen Einrueckung: spieler.y -= 5
+2) if play.key_is_pressed('left'):  →  spieler.x -= 5
+3) if play.key_is_pressed('right'): →  spieler.x += 5
+WICHTIG: Die if-Zeile hat 4 Leerzeichen vor dem 'if', die Bewegungs-Zeile darunter 8 Leerzeichen.`,
                     mode: 'fill',
                     initialCode:
 `spieler = play.new_text(words='O_O', x=0, y=0, font_size=60, color='black')
@@ -169,6 +193,21 @@ def spielschleife():
         spieler.y += 5
     # Schreibe hier deine drei weiteren if-Blöcke:
 
+`,
+                    solution:
+`spieler = play.new_text(words='O_O', x=0, y=0, font_size=60, color='black')
+info = play.new_text(words='Bewege mich mit den Pfeiltasten', x=0, y=180, font_size=18, color='gray')
+
+@play.repeat_forever
+def spielschleife():
+    if play.key_is_pressed('up'):
+        spieler.y += 5
+    if play.key_is_pressed('down'):
+        spieler.y -= 5
+    if play.key_is_pressed('left'):
+        spieler.x -= 5
+    if play.key_is_pressed('right'):
+        spieler.x += 5
 `,
                     validate: ({ studentCode }) => {
                         const checks = [
@@ -222,7 +261,13 @@ def spielschleife():
     punkte.words = 'Punkte: ' + str(score)</pre>
                         <p>Schreibe einen <strong>zweiten</strong> Block, der dasselbe macht, wenn <code>spieler.y</code> zu gross oder zu klein wird.</p>
                     `,
-                    hint: 'Du brauchst die beiden Blöcke unten im repeat_forever (mit der gleichen Einrückung wie das Beispiel). Vergiss str(score) nicht.',
+                    hint: `Kopiere die Struktur vom x-Block, ändere x auf y:
+1) if spieler.y > 200 or spieler.y < -200:    (4 Leerzeichen Einrückung)
+2)     spieler.x = 0                          (8 Leerzeichen)
+3)     spieler.y = 0
+4)     score += 1
+5)     punkte.words = 'Punkte: ' + str(score)
+str(score) wandelt die Zahl in einen Text um, damit man sie an 'Punkte: ' anhängen kann.`,
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -250,6 +295,36 @@ def spielschleife():
 
     # Schreibe hier deinen zweiten if-Block für y:
 
+`,
+                    solution:
+`score = 0
+
+spieler = play.new_text(words='O_O', x=0, y=0, font_size=60, color='black')
+punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
+
+@play.repeat_forever
+def spielschleife():
+    global score
+    if play.key_is_pressed('up'):
+        spieler.y += 5
+    if play.key_is_pressed('down'):
+        spieler.y -= 5
+    if play.key_is_pressed('left'):
+        spieler.x -= 5
+    if play.key_is_pressed('right'):
+        spieler.x += 5
+
+    if spieler.x > 240 or spieler.x < -240:
+        spieler.x = 0
+        spieler.y = 0
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+
+    if spieler.y > 200 or spieler.y < -200:
+        spieler.x = 0
+        spieler.y = 0
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
 `,
                     validate: ({ studentCode }) => {
                         if (!/spieler\.y\s*>\s*\d+\s*or\s*spieler\.y\s*<\s*-?\d+/.test(studentCode)) {
@@ -298,7 +373,12 @@ def spielschleife():
 ziel.y = play.random_number(-150, 150)</pre>
                         <p>Vervollständige unten den Block <code>if spieler.is_touching(ziel):</code>.</p>
                     `,
-                    hint: 'Im if-Block: 1) score erhöhen, 2) punkte.words = \'Punkte: \' + str(score), 3) ziel.x und ziel.y per random_number setzen.',
+                    hint: `Schreibe DREI Zeilen mit jeweils 8 Leerzeichen Einrückung in den if-Block:
+1) score += 5
+2) punkte.words = 'Punkte: ' + str(score)
+3) ziel.x = play.random_number(-200, 200)
+4) ziel.y = play.random_number(-150, 150)
+play.random_number(a, b) gibt eine Zufallszahl zwischen a und b zurück.`,
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -322,6 +402,31 @@ def spielschleife():
     if spieler.is_touching(ziel):
         # Schreibe hier deine drei Sachen:
 
+`,
+                    solution:
+`score = 0
+
+spieler = play.new_text(words='O_O', x=0, y=0, font_size=50, color='black')
+ziel = play.new_circle(color='green', x=180, y=120, radius=22, border_color='dark green', border_width=3)
+punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
+
+@play.repeat_forever
+def spielschleife():
+    global score
+    if play.key_is_pressed('up'):
+        spieler.y += 5
+    if play.key_is_pressed('down'):
+        spieler.y -= 5
+    if play.key_is_pressed('left'):
+        spieler.x -= 5
+    if play.key_is_pressed('right'):
+        spieler.x += 5
+
+    if spieler.is_touching(ziel):
+        score += 5
+        punkte.words = 'Punkte: ' + str(score)
+        ziel.x = play.random_number(-200, 200)
+        ziel.y = play.random_number(-150, 150)
 `,
                     validate: ({ studentCode }) => {
                         const cleaned = studentCode;
@@ -375,7 +480,11 @@ def spielschleife():
                             <li><code>stern.x</code> mit <code>play.random_number(-220, 220)</code> setzen</li>
                         </ul>
                     `,
-                    hint: 'Vier Zeilen mit jeweils 8 Leerzeichen Einrückung (im if-Block innerhalb der Schleife).',
+                    hint: `Im if-Block (8 Leerzeichen Einrückung) brauchst du 4 Zeilen:
+1) score += 1
+2) punkte.words = 'Punkte: ' + str(score)
+3) stern.y = 200    (zurück nach ganz oben)
+4) stern.x = play.random_number(-220, 220)    (neue zufällige x-Position)`,
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -401,6 +510,33 @@ def spielschleife():
     if korb.is_touching(stern):
         # Schreibe hier deinen Treffer-Block:
 
+`,
+                    solution:
+`score = 0
+
+korb = play.new_box(color='brown', x=0, y=-180, width=90, height=18)
+stern = play.new_circle(color='yellow', x=0, y=200, radius=15, border_color='orange', border_width=3)
+punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
+
+@play.repeat_forever
+def spielschleife():
+    global score
+    if play.key_is_pressed('left'):
+        korb.x -= 6
+    if play.key_is_pressed('right'):
+        korb.x += 6
+
+    stern.y -= 4
+
+    if stern.y < -220:
+        stern.y = 200
+        stern.x = play.random_number(-220, 220)
+
+    if korb.is_touching(stern):
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+        stern.y = 200
+        stern.x = play.random_number(-220, 220)
 `,
                     validate: ({ studentCode, error }) => {
                         if (error) return { ok: false, message: error.message || String(error) };
@@ -450,7 +586,12 @@ def spielschleife():
                         </ul>
                         <p><strong>Bereich:</strong> <code>x</code> zwischen <code>-200</code> und <code>200</code>, <code>y</code> zwischen <code>-130</code> und <code>130</code>.</p>
                     `,
-                    hint: 'Drei Zeilen mit je 4 Leerzeichen Einrueckung im def-Block. Verwende play.random_number(-200, 200) und play.random_number(-130, 130).',
+                    hint: `Drei Zeilen direkt unter "global score" (4 Leerzeichen Einrückung):
+1) score += 1
+2) punkte.words = 'Punkte: ' + str(score)
+3) maulwurf.x = play.random_number(-200, 200)
+4) maulwurf.y = play.random_number(-130, 130)
+@maulwurf.when_clicked sorgt dafür, dass die Funktion bei jedem Klick auf den Maulwurf läuft.`,
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -464,6 +605,21 @@ def getroffen():
     global score
     # Schreibe hier:
 
+`,
+                    solution:
+`score = 0
+
+maulwurf = play.new_circle(color='brown', x=0, y=0, radius=32, border_color='black', border_width=3)
+punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
+hinweis = play.new_text(words='Klick auf den Maulwurf!', x=0, y=-190, font_size=18, color='gray')
+
+@maulwurf.when_clicked
+def getroffen():
+    global score
+    score += 1
+    punkte.words = 'Punkte: ' + str(score)
+    maulwurf.x = play.random_number(-200, 200)
+    maulwurf.y = play.random_number(-130, 130)
 `,
                     validate: ({ studentCode, error }) => {
                         if (error) return { ok: false, message: error.message || String(error) };
@@ -513,7 +669,12 @@ if ball.y < -200:
     ball_vy = abs(ball_vy)</pre>
                         <p>Damit zeigt <code>ball_vy</code> immer in die richtige Richtung — nach oben oder nach unten.</p>
                     `,
-                    hint: 'Beide if-Blöcke gehoeren in die Spielschleife (4 Leerzeichen Einrueckung), die Zuweisung 8 Leerzeichen.',
+                    hint: `Genau die zwei Blöcke aus dem Beispiel reichen:
+1)  if ball.y > 200:                 ← 4 Leerzeichen
+2)      ball_vy = -abs(ball_vy)      ← 8 Leerzeichen
+3)  if ball.y < -200:                ← 4 Leerzeichen
+4)      ball_vy = abs(ball_vy)       ← 8 Leerzeichen
+abs(x) macht eine Zahl IMMER positiv. Mit dem Minus davor wird sie immer negativ.`,
                     mode: 'fill',
                     initialCode:
 `ball_vx = 5
@@ -540,6 +701,7 @@ def spielschleife():
     # Wand oben/unten — schreibe hier deine zwei if-Bloecke:
 
 
+
     if ball.is_touching(schlaeger):
         ball_vx = abs(ball_vx)
         score += 1
@@ -555,6 +717,48 @@ def spielschleife():
         score = 0
         punkte.words = 'Punkte: 0'
 
+`,
+                    solution:
+`ball_vx = 5
+ball_vy = 3
+score = 0
+
+ball = play.new_circle(color='red', x=0, y=0, radius=12)
+schlaeger = play.new_box(color='blue', x=-230, y=0, width=14, height=90)
+wand = play.new_box(color='light gray', x=240, y=0, width=8, height=420)
+punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
+
+@play.repeat_forever
+def spielschleife():
+    global ball_vx, ball_vy, score
+
+    if play.key_is_pressed('up'):
+        schlaeger.y += 7
+    if play.key_is_pressed('down'):
+        schlaeger.y -= 7
+
+    ball.x += ball_vx
+    ball.y += ball_vy
+
+    if ball.y > 200:
+        ball_vy = -abs(ball_vy)
+    if ball.y < -200:
+        ball_vy = abs(ball_vy)
+
+    if ball.is_touching(schlaeger):
+        ball_vx = abs(ball_vx)
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+
+    if ball.x > 230:
+        ball_vx = -abs(ball_vx)
+
+    if ball.x < -260:
+        ball.x = 0
+        ball.y = 0
+        ball_vx = 5
+        score = 0
+        punkte.words = 'Punkte: 0'
 `,
                     validate: ({ studentCode, error }) => {
                         if (error) return { ok: false, message: error.message || String(error) };
@@ -604,7 +808,11 @@ def spielschleife():
                             <li><code>apfel.y</code> auf <code>play.random_number(-180, 180)</code></li>
                         </ul>
                     `,
-                    hint: 'Vier Zeilen, jeweils 8 Leerzeichen Einrueckung im if-Block.',
+                    hint: `Vier Zeilen mit je 8 Leerzeichen Einrückung in den if-Block:
+1) score += 1
+2) punkte.words = 'Punkte: ' + str(score)
+3) apfel.x = play.random_number(-220, 220)
+4) apfel.y = play.random_number(-180, 180)`,
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -639,6 +847,42 @@ def spielschleife():
     if kopf.is_touching(apfel):
         # Schreibe hier deinen Apfel-Block:
 
+`,
+                    solution:
+`score = 0
+richtung = 'right'
+
+kopf = play.new_box(color='green', x=0, y=0, width=22, height=22)
+apfel = play.new_circle(color='red', x=150, y=80, radius=12)
+punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
+
+@play.repeat_forever
+def spielschleife():
+    global score, richtung
+
+    if play.key_is_pressed('up'):
+        richtung = 'up'
+    if play.key_is_pressed('down'):
+        richtung = 'down'
+    if play.key_is_pressed('left'):
+        richtung = 'left'
+    if play.key_is_pressed('right'):
+        richtung = 'right'
+
+    if richtung == 'up':
+        kopf.y += 3
+    if richtung == 'down':
+        kopf.y -= 3
+    if richtung == 'left':
+        kopf.x -= 3
+    if richtung == 'right':
+        kopf.x += 3
+
+    if kopf.is_touching(apfel):
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+        apfel.x = play.random_number(-220, 220)
+        apfel.y = play.random_number(-180, 180)
 `,
                     validate: ({ studentCode, error }) => {
                         if (error) return { ok: false, message: error.message || String(error) };
@@ -692,7 +936,11 @@ def klick_gruen():
         naechste_runde()</pre>
                         <p>Und genau dasselbe für <code>blau</code> (mit <code>'blau'</code> im Vergleich).</p>
                     `,
-                    hint: 'Beide Funktionen brauchen einen Decorator (@gruen.when_clicked bzw. @blau.when_clicked) und jeweils ein if mit der passenden Farbe.',
+                    hint: `Kopier den Block für 'rot' zweimal und ändere drei Stellen:
+1) Decorator: @gruen.when_clicked  bzw.  @blau.when_clicked
+2) Funktionsname: def klick_gruen():  bzw.  def klick_blau():
+3) Im if-Vergleich: ziel_farbe == 'gruen'  bzw.  ziel_farbe == 'blau'
+Alle anderen Zeilen bleiben gleich.`,
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -722,6 +970,48 @@ def klick_rot():
 
 # Schreibe hier deine Funktionen fuer gruen und blau:
 
+`,
+                    solution:
+`score = 0
+ziel_farbe = 'rot'
+farben = ['rot', 'gruen', 'blau']
+
+punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
+hinweis = play.new_text(words='Klicke rot', x=0, y=140, font_size=26, color='black')
+
+rot = play.new_box(color='red', x=-150, y=-30, width=80, height=80)
+gruen = play.new_box(color='green', x=0, y=-30, width=80, height=80)
+blau = play.new_box(color='blue', x=150, y=-30, width=80, height=80)
+
+def naechste_runde():
+    global ziel_farbe
+    nr = play.random_number(0, 2)
+    ziel_farbe = farben[nr]
+    hinweis.words = 'Klicke ' + ziel_farbe
+
+@rot.when_clicked
+def klick_rot():
+    global score
+    if ziel_farbe == 'rot':
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+        naechste_runde()
+
+@gruen.when_clicked
+def klick_gruen():
+    global score
+    if ziel_farbe == 'gruen':
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+        naechste_runde()
+
+@blau.when_clicked
+def klick_blau():
+    global score
+    if ziel_farbe == 'blau':
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+        naechste_runde()
 `,
                     validate: ({ studentCode, error }) => {
                         if (error) return { ok: false, message: error.message || String(error) };

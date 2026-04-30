@@ -91,12 +91,23 @@
                         <h3 id="step-title">Aufgabe</h3>
                         <div id="step-description" class="step-description"></div>
                         <div id="step-hint" class="step-hint hidden"></div>
-                        <button id="show-hint" class="ghost-btn small">Tipp anzeigen</button>
+                        <div class="hint-buttons">
+                            <button id="show-hint" class="ghost-btn small">Tipp anzeigen</button>
+                            <button id="show-solution" class="ghost-btn small">Lösung anzeigen</button>
+                        </div>
                     </div>
 
                     <div id="target-card" class="target-card hidden">
                         <h4>Code zum Abtippen</h4>
                         <pre id="target-code"></pre>
+                    </div>
+
+                    <div id="solution-card" class="solution-card hidden">
+                        <div class="solution-card-header">
+                            <h4>Lösung</h4>
+                            <button id="copy-solution" class="ghost-btn small" title="In Editor einfügen">In Editor einfügen</button>
+                        </div>
+                        <pre id="solution-code"></pre>
                     </div>
 
                     <div class="legend-card" id="legend-card">

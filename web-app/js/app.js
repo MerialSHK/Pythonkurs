@@ -296,6 +296,23 @@
             targetCard.classList.add('hidden');
         }
 
+        // Lösungs-Karte (immer erst versteckt; Solution-Code in pre vorbereitet)
+        const solutionCard = document.getElementById('solution-card');
+        const solutionPre = document.getElementById('solution-code');
+        const showSolutionBtn = document.getElementById('show-solution');
+        if (solutionCard && solutionPre && showSolutionBtn) {
+            solutionCard.classList.add('hidden');
+            showSolutionBtn.textContent = 'Lösung anzeigen';
+            const solCode = task.solution || (task.mode === 'type' ? task.targetCode : null);
+            if (solCode) {
+                solutionPre.textContent = solCode;
+                showSolutionBtn.classList.remove('hidden');
+            } else {
+                solutionPre.textContent = '';
+                showSolutionBtn.classList.add('hidden');
+            }
+        }
+
         renderLineNumbers(editor.value);
         requestAnimationFrame(updateHorizontalScroll);
         document.getElementById('canvas-status').textContent = 'Drücke „Ausführen"';
@@ -621,6 +638,33 @@
                 btn.textContent = 'Tipp anzeigen';
             }
         });
+
+        const showSolutionBtn = document.getElementById('show-solution');
+        if (showSolutionBtn) {
+            showSolutionBtn.addEventListener('click', () => {
+                const card = document.getElementById('solution-card');
+                if (card.classList.contains('hidden')) {
+                    card.classList.remove('hidden');
+                    showSolutionBtn.textContent = 'Lösung ausblenden';
+                } else {
+                    card.classList.add('hidden');
+                    showSolutionBtn.textContent = 'Lösung anzeigen';
+                }
+            });
+        }
+
+        const copySolutionBtn = document.getElementById('copy-solution');
+        if (copySolutionBtn) {
+            copySolutionBtn.addEventListener('click', () => {
+                const sol = document.getElementById('solution-code').textContent;
+                if (!sol) return;
+                const editor = document.getElementById('code-editor');
+                editor.value = sol;
+                editor.dispatchEvent(new Event('input'));
+                copySolutionBtn.textContent = 'Eingefügt ✓';
+                setTimeout(() => { copySolutionBtn.textContent = 'In Editor einfügen'; }, 1800);
+            });
+        }
 
         document.getElementById('finish-back').addEventListener('click', () => {
             renderLevelMap();
