@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Python Spiele-Kurs</title>
+    <link rel="stylesheet" href="css/styles.css" />
+</head>
+<body>
+    <div id="app">
+        <!-- Login-Screen -->
+        <section id="login-screen" class="screen active">
+            <div class="login-card">
+                <div class="brand">
+                    <svg class="brand-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 28 L8 36 L16 44" />
+                        <path d="M48 28 L56 36 L48 44" />
+                        <path d="M38 22 L26 50" />
+                    </svg>
+                    <h1>Python Spiele-Kurs</h1>
+                </div>
+                <p class="subtitle">Wähle dein Profil und starte dein Abenteuer</p>
+
+                <div id="profile-grid" class="profile-grid"></div>
+
+                <div class="password-row hidden" id="password-row">
+                    <label for="password-input">Passwort</label>
+                    <input id="password-input" type="password" placeholder="Passwort eingeben" autocomplete="off" />
+                    <button id="login-button" class="primary-btn">Einloggen</button>
+                </div>
+                <p id="login-error" class="error hidden">Falsches Passwort. Versuch es nochmal.</p>
+
+                <p class="hint-bottom">Tipp für die Lehrkraft: Standard-Passwort ist <code>python</code></p>
+            </div>
+        </section>
+
+        <!-- Level-Übersicht -->
+        <section id="map-screen" class="screen">
+            <header class="map-header">
+                <div class="user-pill">
+                    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="8" r="4" />
+                        <path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8" />
+                    </svg>
+                    <span id="user-display">—</span>
+                </div>
+                <div class="map-title">
+                    <h2>Deine Reise</h2>
+                    <p id="progress-summary">0 / 5 Level abgeschlossen</p>
+                </div>
+                <div class="map-actions">
+                    <button id="reset-progress" class="ghost-btn" title="Fortschritt zurücksetzen">Neu starten</button>
+                    <button id="logout-button" class="ghost-btn">Abmelden</button>
+                </div>
+            </header>
+
+            <div class="map-grid" id="level-grid"></div>
+
+            <div class="badges-card">
+                <h3>Deine Sterne</h3>
+                <div id="badge-row" class="badge-row"></div>
+            </div>
+        </section>
+
+        <!-- Level-Spielansicht -->
+        <section id="level-screen" class="screen">
+            <header class="level-header">
+                <button id="back-to-map" class="ghost-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M15 18l-6-6 6-6" />
+                    </svg>
+                    Levelkarte
+                </button>
+                <div class="level-title-block">
+                    <span class="level-tag" id="level-tag">Level 1</span>
+                    <h2 id="level-title">—</h2>
+                </div>
+                <div class="level-progress-block">
+                    <div class="task-counter">
+                        <span id="task-counter">Aufgabe 1 / 1</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="level-progress-fill"></div>
+                    </div>
+                </div>
+            </header>
+
+            <main class="level-main">
+                <aside class="instructions-panel">
+                    <div class="instruction-card">
+                        <h3 id="step-title">Aufgabe</h3>
+                        <div id="step-description" class="step-description"></div>
+                        <div id="step-hint" class="step-hint hidden"></div>
+                        <button id="show-hint" class="ghost-btn small">Tipp anzeigen</button>
+                    </div>
+
+                    <div class="legend-card" id="legend-card">
+                        <h4>Was du lernst</h4>
+                        <ul id="concept-list"></ul>
+                    </div>
+                </aside>
+
+                <section class="editor-panel">
+                    <div class="editor-toolbar">
+                        <span class="filename">main.py</span>
+                        <div class="toolbar-actions">
+                            <button id="reset-code" class="ghost-btn small" title="Code zurücksetzen">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M3 12a9 9 0 1 0 3-6.7" />
+                                    <path d="M3 4v5h5" />
+                                </svg>
+                                Zurücksetzen
+                            </button>
+                            <button id="run-code" class="primary-btn small">
+                                <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                    <polygon points="6 4 20 12 6 20 6 4"/>
+                                </svg>
+                                Ausführen <kbd>Enter</kbd>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="editor-wrapper">
+                        <pre id="ghost-layer" class="ghost-layer" aria-hidden="true"></pre>
+                        <pre id="line-numbers" class="line-numbers" aria-hidden="true"></pre>
+                        <textarea id="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" wrap="off"></textarea>
+                    </div>
+
+                    <div class="editor-statusbar">
+                        <span id="editor-status">Bereit</span>
+                    </div>
+                </section>
+
+                <section class="canvas-panel">
+                    <div class="canvas-toolbar">
+                        <span class="canvas-title">Live-Vorschau</span>
+                        <span class="canvas-status" id="canvas-status">Drücke „Ausführen"</span>
+                    </div>
+                    <div class="canvas-wrapper">
+                        <canvas id="play-canvas" width="520" height="420"></canvas>
+                        <div id="canvas-overlay" class="canvas-overlay hidden">
+                            <div class="overlay-content">
+                                <h3 id="overlay-title">Geschafft!</h3>
+                                <p id="overlay-message"></p>
+                                <button id="overlay-action" class="primary-btn">Weiter</button>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="key-hints" id="key-hints"></div>
+                </section>
+            </main>
+        </section>
+
+        <!-- Komplettierungs-Screen -->
+        <section id="finish-screen" class="screen">
+            <div class="finish-card">
+                <svg class="trophy" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 8h32v10a16 16 0 0 1-32 0V8z" />
+                    <path d="M16 14H8a8 8 0 0 0 8 8" />
+                    <path d="M48 14h8a8 8 0 0 1-8 8" />
+                    <path d="M24 40h16v6H24z" />
+                    <path d="M20 52h24v4H20z" />
+                </svg>
+                <h2>Du hast es geschafft!</h2>
+                <p id="finish-summary">Alle Level abgeschlossen.</p>
+                <div class="finish-actions">
+                    <button id="finish-back" class="primary-btn">Zur Levelkarte</button>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script src="js/playlib.js"></script>
+    <script src="js/transpiler.js"></script>
+    <script src="js/levels.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
