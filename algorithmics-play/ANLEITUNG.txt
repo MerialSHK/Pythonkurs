@@ -1,0 +1,97 @@
+=============================================
+  ANLEITUNG FÜR DIE VERTRETUNG
+  Python Spiele-Kurs (Windows)
+=============================================
+
+Hallo! Danke, dass du den Kurs übernimmst.
+
+KURZ ERKLÄRT: Die Schüler öffnen eine Python-Datei
+(main.py), in der schon fertiger Code steht — aber
+"ausgeschaltet" (mit # davor). Sie schalten Stück für
+Stück Code-Blöcke ein und sehen sofort das Ergebnis
+in einem Spielfenster. 
+
+
+
+WAS DIE SCHÜLER TUN (Kurzfassung)
+==================================
+
+1. Den Ordner auf den Desktop kopieren
+   (falls nicht schon vorhanden)
+
+2. Doppelklick auf "setup.bat"
+   → Installiert alles Nötige (Python-Pakete, VS Code)
+   → Dauert 2-5 Minuten, braucht Internet
+   → Muss nur 1x pro PC gemacht werden
+   → Wenn schon mal gemacht: überspringen
+
+3. Die Datei "main.py" in VS Code öffnen
+   → Rechtsklick auf main.py → "Öffnen mit" → VS Code
+   → ODER: VS Code starten → Datei → Öffnen → main.py
+
+4. Doppelklick auf "start.bat" zum Starten
+   → Ein Spielfenster öffnet sich
+   → Fenster schliessen um zurück zum Code zu gehen
+
+5. Aufgaben in main.py folgen (Level 1 bis 6)
+   → Die GANZE Zeile mit der Maus markieren (blau hinterlegt)
+   → Strg+/ drücken = entfernt das # am Anfang
+   → Prüfen: Das # muss WEG sein! Wenn nicht: Strg+Z und nochmal
+   → Speichern mit Strg+S (WICHTIG! Ohne Speichern passiert nichts)
+   → start.bat erneut starten um Ergebnis zu sehen
+
+   WICHTIG: Immer ALLE Zeilen eines Blocks markieren,
+   nicht nur einzelne! Und die Level der Reihe nach machen.
+
+DER ARBEITSABLAUF IST IMMER:
+   Code ändern → Speichern (Strg+S) → start.bat → Ergebnis sehen
+   → Fenster schliessen → Nächstes Level
+
+
+
+
+================
+
+Problem: "Python nicht gefunden"
+Lösung:  setup.bat nochmal ausführen
+
+Problem: "Module not found" oder "No module named play"
+Lösung:  setup.bat nochmal ausführen
+
+Problem: Fenster öffnet sich nicht
+Lösung:  Scrolle ganz nach unten in main.py.
+         Die Zeile "play.start_program()" muss dort stehen.
+         Diese Zeile darf NICHT gelöscht oder verändert werden!
+
+Problem: "SyntaxError" oder "IndentationError"
+Lösung:  Strg+Z in VS Code mehrmals drücken (rückgängig).
+         Oder: reset.bat starten.
+
+Problem: Schüler hat zu viel gelöscht
+Lösung:  reset.bat starten (setzt main.py zurück)
+
+Problem: setup.bat bleibt hängen
+Lösung:  Braucht Internet! Prüfe die Verbindung.
+
+Problem: Das Spielfenster öffnet und schliesst sofort wieder
+Lösung:  start.bat zeigt die Fehlermeldung im schwarzen Fenster.
+         Meistens: Code-Fehler → Strg+Z in VS Code, dann nochmal.
+
+Problem: VS Code wurde nicht installiert
+Lösung:  VS Code manuell installieren:
+         https://code.visualstudio.com/download
+         Ohne VS Code ist Strg+/ nicht möglich — dann muss
+         das # manuell gelöscht werden (umständlich!).
+
+
+
+DATEIEN IM ORDNER
+=================
+
+main.py          ← Die Datei die Schüler bearbeiten
+main_original.py ← Backup (nicht anfassen!)
+setup.bat        ← Installiert alles (1x pro PC)
+start.bat        ← Startet das Programm
+reset.bat        ← Setzt main.py zurück wenn kaputt
+requirements.txt ← Liste der benötigten Pakete
+ANLEITUNG.txt    ← Diese Datei
