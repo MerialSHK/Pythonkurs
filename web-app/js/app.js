@@ -389,6 +389,19 @@
         const ctx = canvas.getContext('2d');
         ctx.fillStyle = '#fbfcfe';
         ctx.fillRect(0, 0, canvas.width, canvas.height);
+        const stopBtn = document.getElementById('stop-code');
+        if (stopBtn) stopBtn.disabled = true;
+    }
+
+    function stopGame() {
+        clearCanvas();
+        const canvasStatusEl = document.getElementById('canvas-status');
+        canvasStatusEl.className = 'canvas-status';
+        canvasStatusEl.textContent = 'Angehalten';
+        const statusEl = document.getElementById('editor-status');
+        statusEl.className = 'editor-statusbar';
+        statusEl.textContent = 'Spiel gestoppt';
+        document.getElementById('canvas-overlay').classList.add('hidden');
     }
 
     // -----------------------------------------------------------
@@ -409,6 +422,8 @@
         const canvas = document.getElementById('play-canvas');
         const play = PlayLib.createPlay(canvas);
         state.play = play;
+        const stopBtn = document.getElementById('stop-code');
+        if (stopBtn) stopBtn.disabled = false;
 
         const statusEl = document.getElementById('editor-status');
         const canvasStatusEl = document.getElementById('canvas-status');
@@ -618,6 +633,7 @@
         });
 
         document.getElementById('run-code').addEventListener('click', runCode);
+        document.getElementById('stop-code').addEventListener('click', stopGame);
         document.getElementById('reset-code').addEventListener('click', () => {
             const lvl = LEVELS.find(l => l.id === state.currentLevelId);
             const task = lvl.tasks[state.currentTaskIdx];

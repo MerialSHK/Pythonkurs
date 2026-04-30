@@ -102,6 +102,8 @@ button {
 }
 .ghost-btn:hover { background: var(--surface-soft); border-color: var(--border-strong); color: var(--text); }
 .ghost-btn.small { padding: 6px 10px; font-size: 12px; }
+.ghost-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+.ghost-btn:disabled:hover { background: var(--surface); border-color: var(--border); color: var(--text-muted); }
 
 .hidden { display: none !important; }
 
