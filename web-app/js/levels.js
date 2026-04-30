@@ -786,7 +786,7 @@ def spielschleife():
         {
             id: 9,
             title: 'Schlange & Apfel',
-            shortDescription: 'Steuere die Schlange durchs Spielfeld und sammle so viele Aepfel wie moeglich.',
+            shortDescription: 'Steuere die Schlange durchs Spielfeld und sammle Aepfel — pro Treffer waechst sie um ein Glied.',
             concepts: [
                 'String-Variable als „Richtung"',
                 'Mehrere if-Bloecke fuer Bewegung',
@@ -817,14 +817,26 @@ def spielschleife():
                     initialCode:
 `score = 0
 richtung = 'right'
+schritt = 0
 
-kopf = play.new_box(color='green', x=0, y=0, width=22, height=22)
-apfel = play.new_circle(color='red', x=150, y=80, radius=12)
+kopf = play.new_circle(color='dark green', x=0, y=0, radius=12, border_color='black', border_width=2)
+seg1 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg2 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg3 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg4 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg5 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg1.hide()
+seg2.hide()
+seg3.hide()
+seg4.hide()
+seg5.hide()
+
+apfel = play.new_text(words='🍎', x=150, y=80, font_size=32)
 punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
 
 @play.repeat_forever
 def spielschleife():
-    global score, richtung
+    global score, richtung, schritt
 
     if play.key_is_pressed('up'):
         richtung = 'up'
@@ -843,6 +855,32 @@ def spielschleife():
         kopf.x -= 3
     if richtung == 'right':
         kopf.x += 3
+
+    # Koerperteile folgen mit Verzoegerung
+    schritt += 1
+    if schritt % 6 == 0:
+        seg5.x = seg4.x
+        seg5.y = seg4.y
+        seg4.x = seg3.x
+        seg4.y = seg3.y
+        seg3.x = seg2.x
+        seg3.y = seg2.y
+        seg2.x = seg1.x
+        seg2.y = seg1.y
+        seg1.x = kopf.x
+        seg1.y = kopf.y
+
+    # Pro gegessenen Apfel ein Koerperteil mehr
+    if score >= 1:
+        seg1.show()
+    if score >= 2:
+        seg2.show()
+    if score >= 3:
+        seg3.show()
+    if score >= 4:
+        seg4.show()
+    if score >= 5:
+        seg5.show()
 
     if kopf.is_touching(apfel):
         # Schreibe hier deinen Apfel-Block:
@@ -851,14 +889,26 @@ def spielschleife():
                     solution:
 `score = 0
 richtung = 'right'
+schritt = 0
 
-kopf = play.new_box(color='green', x=0, y=0, width=22, height=22)
-apfel = play.new_circle(color='red', x=150, y=80, radius=12)
+kopf = play.new_circle(color='dark green', x=0, y=0, radius=12, border_color='black', border_width=2)
+seg1 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg2 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg3 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg4 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg5 = play.new_circle(color='green', x=0, y=0, radius=10, border_color='dark green', border_width=2)
+seg1.hide()
+seg2.hide()
+seg3.hide()
+seg4.hide()
+seg5.hide()
+
+apfel = play.new_text(words='🍎', x=150, y=80, font_size=32)
 punkte = play.new_text(words='Punkte: 0', x=0, y=190, font_size=22, color='blue')
 
 @play.repeat_forever
 def spielschleife():
-    global score, richtung
+    global score, richtung, schritt
 
     if play.key_is_pressed('up'):
         richtung = 'up'
@@ -877,6 +927,30 @@ def spielschleife():
         kopf.x -= 3
     if richtung == 'right':
         kopf.x += 3
+
+    schritt += 1
+    if schritt % 6 == 0:
+        seg5.x = seg4.x
+        seg5.y = seg4.y
+        seg4.x = seg3.x
+        seg4.y = seg3.y
+        seg3.x = seg2.x
+        seg3.y = seg2.y
+        seg2.x = seg1.x
+        seg2.y = seg1.y
+        seg1.x = kopf.x
+        seg1.y = kopf.y
+
+    if score >= 1:
+        seg1.show()
+    if score >= 2:
+        seg2.show()
+    if score >= 3:
+        seg3.show()
+    if score >= 4:
+        seg4.show()
+    if score >= 5:
+        seg5.show()
 
     if kopf.is_touching(apfel):
         score += 1

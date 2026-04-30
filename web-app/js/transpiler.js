@@ -27,7 +27,7 @@
     function transpile(source) {
         const lines = source.replace(/\r\n/g, '\n').split('\n');
         const out = [];
-        const indentStack = [{ indent: -1, kind: 'root' }];
+        const indentStack = [{ indent: -1, kind: 'root', globals: new Set() }];
 
         let pendingDecorators = [];
 
@@ -40,6 +40,16 @@
                     out.push(' '.repeat(Math.max(0, blk.indent)) + '})');
                 }
             }
+        }
+
+        function isDeclaredGlobal(name) {
+            for (let k = indentStack.length - 1; k >= 0; k--) {
+                const blk = indentStack[k];
+                if ((blk.kind === 'fn' || blk.kind === 'fn-decorated') && blk.globals.has(name)) {
+                    return true;
+                }
+            }
+            return false;
         }
 
         for (let rawLine of lines) {
@@ -81,11 +91,11 @@
                     header = `${padding}${pendingDecorators[0]}(async function ${fnName}(${args}) {`;
                     pendingDecorators = [];
                     out.push(header);
-                    indentStack.push({ indent, kind: 'fn-decorated' });
+                    indentStack.push({ indent, kind: 'fn-decorated', globals: new Set() });
                 } else {
                     header = `${padding}async function ${fnName}(${args}) {`;
                     out.push(header);
-                    indentStack.push({ indent, kind: 'fn' });
+                    indentStack.push({ indent, kind: 'fn', globals: new Set() });
                 }
                 continue;
             }
@@ -139,7 +149,19 @@
             }
 
             // global / pass
-            if (/^global\s/.test(code)) { out.push(`${' '.repeat(indent)}/* global */`); continue; }
+            const globalMatch = code.match(/^global\s+(.+)$/);
+            if (globalMatch) {
+                const names = globalMatch[1].split(',').map(s => s.trim()).filter(Boolean);
+                for (let k = indentStack.length - 1; k >= 0; k--) {
+                    const blk = indentStack[k];
+                    if (blk.kind === 'fn' || blk.kind === 'fn-decorated') {
+                        for (const n of names) blk.globals.add(n);
+                        break;
+                    }
+                }
+                out.push(`${' '.repeat(indent)}/* global ${names.join(', ')} */`);
+                continue;
+            }
             if (/^pass$/.test(code)) { out.push(`${' '.repeat(indent)};`); continue; }
             if (/^break$/.test(code)) { out.push(`${' '.repeat(indent)}break;`); continue; }
             if (/^continue$/.test(code)) { out.push(`${' '.repeat(indent)}continue;`); continue; }
@@ -167,6 +189,10 @@
                 const target = assignMatch[1];
                 const value = transpileExpression(assignMatch[2]);
                 if (target.includes('.') || target.includes('[')) {
+                    out.push(`${' '.repeat(indent)}${target} = ${value};`);
+                } else if (isDeclaredGlobal(target)) {
+                    // global-deklarierte Variable: ohne `var` zuweisen, damit
+                    // die Variable im aeusseren Scope geaendert wird
                     out.push(`${' '.repeat(indent)}${target} = ${value};`);
                 } else {
                     // Variable: erste Zuweisung mit `var` (toleriert Mehrfach-Zuweisung)
