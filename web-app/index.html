@@ -94,6 +94,11 @@
                         <button id="show-hint" class="ghost-btn small">Tipp anzeigen</button>
                     </div>
 
+                    <div id="target-card" class="target-card hidden">
+                        <h4>Code zum Abtippen</h4>
+                        <pre id="target-code"></pre>
+                    </div>
+
                     <div class="legend-card" id="legend-card">
                         <h4>Was du lernst</h4>
                         <ul id="concept-list"></ul>
@@ -124,6 +129,10 @@
                         <pre id="ghost-layer" class="ghost-layer" aria-hidden="true"></pre>
                         <pre id="line-numbers" class="line-numbers" aria-hidden="true"></pre>
                         <textarea id="code-editor" spellcheck="false" autocomplete="off" autocorrect="off" autocapitalize="off" wrap="off"></textarea>
+                    </div>
+
+                    <div id="editor-hscroll" class="editor-hscroll hidden">
+                        <input id="editor-hscroll-slider" type="range" min="0" max="0" step="1" value="0" aria-label="Horizontal scrollen" />
                     </div>
 
                     <div class="editor-statusbar">

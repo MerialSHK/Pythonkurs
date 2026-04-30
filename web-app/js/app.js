@@ -6,9 +6,15 @@
     'use strict';
 
     const STUDENTS = [
-        'Anna', 'Ben', 'Clara', 'David',
-        'Emma', 'Felix', 'Greta', 'Hannes',
-        'Ida', 'Jonas', 'Klara', 'Leo'
+        'Bergmann Patrick',
+        'Hollensteiner Katrin',
+        'Klingesberger Constantin',
+        'Kraml Marcel',
+        'Petschenig Xaver',
+        'Resch Matteo',
+        'Schwarzl Konstantin',
+        'Temmel Mark',
+        'Wagner Alana'
     ];
     const PASSWORD = 'python';
     const STORAGE_KEY = 'pythonkurs.progress';
@@ -62,10 +68,8 @@
         return state.progress[state.currentUser];
     }
 
-    function isLevelUnlocked(levelId) {
-        if (levelId === 1) return true;
-        const userProg = getUserProgress();
-        return userProg.completed.includes(levelId - 1);
+    function isLevelUnlocked() {
+        return true;
     }
 
     function isLevelCompleted(levelId) {
@@ -90,8 +94,9 @@
             const tile = document.createElement('button');
             tile.className = 'profile-tile';
             tile.dataset.name = name;
+            const initials = name.split(/\s+/).map(p => p[0] || '').join('').slice(0, 2).toUpperCase();
             tile.innerHTML = `
-                <div class="profile-avatar">${name.slice(0, 1).toUpperCase()}</div>
+                <div class="profile-avatar">${initials}</div>
                 <div class="profile-name">${name}</div>
             `;
             tile.addEventListener('click', () => selectProfile(name));
@@ -278,15 +283,21 @@
         // Ghost-Layer
         const ghostLayer = document.getElementById('ghost-layer');
         const wrapper = editor.parentElement;
+        const targetCard = document.getElementById('target-card');
+        const targetPre = document.getElementById('target-code');
         if (task.mode === 'type') {
             wrapper.classList.add('typing-mode');
             renderGhost(task.targetCode, editor.value);
+            targetPre.textContent = task.targetCode;
+            targetCard.classList.remove('hidden');
         } else {
             wrapper.classList.remove('typing-mode');
             ghostLayer.innerHTML = '';
+            targetCard.classList.add('hidden');
         }
 
         renderLineNumbers(editor.value);
+        requestAnimationFrame(updateHorizontalScroll);
         document.getElementById('canvas-status').textContent = 'Drücke „Ausführen"';
         document.getElementById('canvas-status').className = 'canvas-status';
         document.getElementById('editor-status').textContent = 'Bereit';
@@ -328,6 +339,28 @@
         let html = '';
         for (let i = 1; i <= Math.max(lines, 1); i++) html += i + '\n';
         ln.textContent = html;
+    }
+
+    function updateHorizontalScroll() {
+        const editor = document.getElementById('code-editor');
+        const ghost = document.getElementById('ghost-layer');
+        const slider = document.getElementById('editor-hscroll-slider');
+        const wrap = document.getElementById('editor-hscroll');
+        if (!editor || !slider || !wrap) return;
+
+        const editorMax = Math.max(0, editor.scrollWidth - editor.clientWidth);
+        const ghostMax = Math.max(0, ghost.scrollWidth - ghost.clientWidth);
+        const max = Math.max(editorMax, ghostMax);
+
+        if (max > 2) {
+            wrap.classList.remove('hidden');
+            slider.max = String(max);
+            slider.value = String(Math.min(editor.scrollLeft, max));
+        } else {
+            wrap.classList.add('hidden');
+            slider.max = '0';
+            slider.value = '0';
+        }
     }
 
     function clearCanvas() {
@@ -492,6 +525,7 @@
                 renderGhost(task.targetCode, editor.value);
             }
             renderLineNumbers(editor.value);
+            updateHorizontalScroll();
             // Live-Speichern
             const userProg = getUserProgress();
             userProg.code[`${lvl.id}.${state.currentTaskIdx}`] = editor.value;
@@ -520,6 +554,26 @@
             document.getElementById('line-numbers').scrollTop = editor.scrollTop;
             document.getElementById('ghost-layer').scrollTop = editor.scrollTop;
             document.getElementById('ghost-layer').scrollLeft = editor.scrollLeft;
+            const slider = document.getElementById('editor-hscroll-slider');
+            if (slider) slider.value = String(editor.scrollLeft);
+        });
+
+        // Horizontaler Slider steuert Editor + Ghost gemeinsam
+        const slider = document.getElementById('editor-hscroll-slider');
+        if (slider) {
+            const onSlide = () => {
+                const v = parseInt(slider.value, 10) || 0;
+                editor.scrollLeft = v;
+                const ghost = document.getElementById('ghost-layer');
+                ghost.scrollLeft = v;
+            };
+            slider.addEventListener('input', onSlide);
+            slider.addEventListener('change', onSlide);
+        }
+
+        // Bei Fenstergroessenaenderung Slider neu bemessen
+        window.addEventListener('resize', () => {
+            requestAnimationFrame(updateHorizontalScroll);
         });
     }
 
