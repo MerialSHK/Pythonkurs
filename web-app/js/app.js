@@ -19,6 +19,8 @@
     const PASSWORD = 'python';
     const STORAGE_KEY = 'pythonkurs.progress';
     const SESSION_KEY = 'pythonkurs.session';
+    const WORLD_KEY = 'pythonkurs.world';
+    const SOLUTION_UNLOCK_MS = 15 * 60 * 1000; // 15 Minuten
 
     const screens = {
         login:  document.getElementById('login-screen'),
@@ -33,7 +35,10 @@
         currentLevelId: null,
         currentTaskIdx: 0,
         play: null,
-        selectedProfile: null
+        selectedProfile: null,
+        currentWorld: 1,
+        currentHintIdx: 0,
+        solutionTimerInterval: null
     };
 
     // -----------------------------------------------------------
@@ -61,11 +66,25 @@
     }
 
     function getUserProgress() {
-        if (!state.currentUser) return { completed: [], code: {} };
+        if (!state.currentUser) return { completed: [], code: {}, taskStartTimes: {} };
         if (!state.progress[state.currentUser]) {
-            state.progress[state.currentUser] = { completed: [], code: {} };
+            state.progress[state.currentUser] = { completed: [], code: {}, taskStartTimes: {} };
         }
-        return state.progress[state.currentUser];
+        const p = state.progress[state.currentUser];
+        if (!p.taskStartTimes) p.taskStartTimes = {};
+        if (!p.code) p.code = {};
+        if (!p.completed) p.completed = [];
+        return p;
+    }
+
+    function loadWorld() {
+        try {
+            const v = parseInt(localStorage.getItem(WORLD_KEY), 10);
+            return (v === 1 || v === 2) ? v : 1;
+        } catch (e) { return 1; }
+    }
+    function saveWorld(w) {
+        try { localStorage.setItem(WORLD_KEY, String(w)); } catch (e) {}
     }
 
     function isLevelUnlocked() {
@@ -150,7 +169,14 @@
         grid.innerHTML = '';
         const userProg = getUserProgress();
 
-        LEVELS.forEach(lvl => {
+        // Tabs aktualisieren
+        document.querySelectorAll('.world-tab').forEach(tab => {
+            tab.classList.toggle('active', parseInt(tab.dataset.world, 10) === state.currentWorld);
+        });
+
+        const visibleLevels = LEVELS.filter(l => (l.world || 1) === state.currentWorld);
+
+        visibleLevels.forEach(lvl => {
             const unlocked = isLevelUnlocked(lvl.id);
             const completed = isLevelCompleted(lvl.id);
             const card = document.createElement('div');
@@ -184,16 +210,16 @@
             grid.appendChild(card);
         });
 
-        const total = LEVELS.length;
-        const done = userProg.completed.length;
+        const totalInWorld = visibleLevels.length;
+        const doneInWorld = visibleLevels.filter(l => userProg.completed.includes(l.id)).length;
         document.getElementById('progress-summary').textContent =
-            `${done} / ${total} Level abgeschlossen`;
+            `${doneInWorld} / ${totalInWorld} Level in Welt ${state.currentWorld} abgeschlossen`;
 
         renderBadges();
 
-        if (done === total) {
+        if (userProg.completed.length === LEVELS.length) {
             document.getElementById('finish-summary').textContent =
-                `${state.currentUser}, du hast alle ${total} Level gemeistert!`;
+                `${state.currentUser}, du hast alle ${LEVELS.length} Level gemeistert!`;
         }
     }
 
@@ -201,7 +227,8 @@
         const row = document.getElementById('badge-row');
         row.innerHTML = '';
         const userProg = getUserProgress();
-        LEVELS.forEach(lvl => {
+        const visibleLevels = LEVELS.filter(l => (l.world || 1) === state.currentWorld);
+        visibleLevels.forEach(lvl => {
             const earned = userProg.completed.includes(lvl.id);
             const badge = document.createElement('div');
             badge.className = 'badge' + (earned ? ' earned' : '');
@@ -268,10 +295,17 @@
         const progressPct = ((state.currentTaskIdx) / lvl.tasks.length) * 100;
         document.getElementById('level-progress-fill').style.width = progressPct + '%';
 
+        // Hint-Anzeige zuruecksetzen
         const hintEl = document.getElementById('step-hint');
+        const progEl = document.getElementById('progressive-hints-container');
         hintEl.classList.add('hidden');
+        progEl.classList.add('hidden');
+        progEl.innerHTML = '';
         hintEl.textContent = task.hint || '';
         document.getElementById('show-hint').textContent = 'Tipp anzeigen';
+        state.currentHintIdx = 0;
+
+        setupSolutionTimer(task);
 
         // Editor-Inhalt aus gespeichertem Code oder Initial-Code
         const userProg = getUserProgress();
@@ -416,6 +450,17 @@
         const codeKey = `${state.currentLevelId}.${state.currentTaskIdx}`;
         userProg.code[codeKey] = code;
         saveProgress();
+
+        // Pruefung auf nicht ausgefuellte Luecken
+        if (code.includes('___')) {
+            const statusEl = document.getElementById('editor-status');
+            const canvasStatusEl = document.getElementById('canvas-status');
+            statusEl.className = 'editor-statusbar error';
+            statusEl.textContent = 'Du musst noch die Lücken (___) ausfüllen — schau dir den Tipp dazu an!';
+            canvasStatusEl.className = 'canvas-status error';
+            canvasStatusEl.textContent = 'Lücken offen';
+            return;
+        }
 
         clearCanvas();
 
@@ -610,6 +655,124 @@
     }
 
     // -----------------------------------------------------------
+    //  PROGRESSIVE HINTS & SOLUTION-TIMER
+    // -----------------------------------------------------------
+    function escapeHtml(s) {
+        return String(s == null ? '' : s)
+            .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+
+    function formatHintCode(code) {
+        // Ersetze ___ durch markierte Lücke
+        return escapeHtml(code).replace(/___/g, '<span class="code-blank">___</span>');
+    }
+
+    function getTaskKey(lvlId, taskIdx) {
+        return `${lvlId}.${taskIdx}`;
+    }
+
+    function ensureTaskStartTime(lvlId, taskIdx) {
+        const userProg = getUserProgress();
+        const key = getTaskKey(lvlId, taskIdx);
+        if (!userProg.taskStartTimes[key]) {
+            userProg.taskStartTimes[key] = Date.now();
+            saveProgress();
+        }
+        return userProg.taskStartTimes[key];
+    }
+
+    function isSolutionUnlocked(task, lvlId, taskIdx) {
+        // Bei alten Aufgaben (kein progressiveHints) immer entsperrt
+        if (!task.progressiveHints) return true;
+        const userProg = getUserProgress();
+        const start = userProg.taskStartTimes[getTaskKey(lvlId, taskIdx)];
+        if (!start) return false;
+        return (Date.now() - start) >= SOLUTION_UNLOCK_MS;
+    }
+
+    function formatCountdown(ms) {
+        if (ms < 0) ms = 0;
+        const total = Math.ceil(ms / 1000);
+        const m = Math.floor(total / 60);
+        const s = total % 60;
+        return `${String(m).padStart(2,'0')}:${String(s).padStart(2,'0')}`;
+    }
+
+    function clearSolutionTimer() {
+        if (state.solutionTimerInterval) {
+            clearInterval(state.solutionTimerInterval);
+            state.solutionTimerInterval = null;
+        }
+    }
+
+    function setupSolutionTimer(task) {
+        clearSolutionTimer();
+        const lockEl = document.getElementById('solution-lock');
+        const cdEl = document.getElementById('solution-countdown');
+        const btn = document.getElementById('show-solution');
+
+        if (!task.progressiveHints) {
+            // Altes System — Lock unsichtbar, Button frei
+            lockEl.classList.add('hidden');
+            btn.classList.remove('locked');
+            btn.disabled = false;
+            return;
+        }
+
+        // Neues System: Timer starten
+        ensureTaskStartTime(state.currentLevelId, state.currentTaskIdx);
+
+        function update() {
+            const userProg = getUserProgress();
+            const start = userProg.taskStartTimes[getTaskKey(state.currentLevelId, state.currentTaskIdx)];
+            const elapsed = Date.now() - start;
+            const remaining = SOLUTION_UNLOCK_MS - elapsed;
+            if (remaining <= 0) {
+                lockEl.classList.add('hidden');
+                btn.classList.remove('locked');
+                btn.disabled = false;
+                clearSolutionTimer();
+            } else {
+                lockEl.classList.remove('hidden');
+                cdEl.textContent = formatCountdown(remaining);
+                btn.classList.add('locked');
+                btn.disabled = false; // Klick zeigt Hinweis statt Lösung
+            }
+        }
+        update();
+        state.solutionTimerInterval = setInterval(update, 1000);
+    }
+
+    function renderProgressiveHint(idx, hint) {
+        const container = document.getElementById('progressive-hints-container');
+        const card = document.createElement('div');
+        card.className = 'progressive-hint';
+        const codeHtml = formatHintCode(hint.codeTemplate || '');
+        card.innerHTML = `
+            <div class="progressive-hint-header">
+                <span class="progressive-hint-title">Tipp ${idx + 1}: ${escapeHtml(hint.title || '')}</span>
+            </div>
+            ${hint.explanation ? `<p class="progressive-hint-explanation">${escapeHtml(hint.explanation)}</p>` : ''}
+            <pre>${codeHtml}</pre>
+            ${hint.blankHint ? `<div class="progressive-hint-blank-tip"><strong>↳</strong><span>${escapeHtml(hint.blankHint)}</span></div>` : ''}
+            <div class="progressive-hint-actions">
+                <button class="ghost-btn small insert-hint-btn">In Editor einfügen</button>
+            </div>
+        `;
+        container.appendChild(card);
+        const btn = card.querySelector('.insert-hint-btn');
+        btn.addEventListener('click', () => {
+            const editor = document.getElementById('code-editor');
+            const cur = editor.value.trimEnd();
+            const sep = cur.length === 0 ? '' : '\n\n';
+            editor.value = cur + sep + hint.codeTemplate;
+            editor.dispatchEvent(new Event('input'));
+            btn.textContent = 'Eingefügt ✓';
+            setTimeout(() => { btn.textContent = 'In Editor einfügen'; }, 1500);
+        });
+    }
+
+    // -----------------------------------------------------------
     //  INIT
     // -----------------------------------------------------------
     function bindUI() {
@@ -621,13 +784,25 @@
         document.getElementById('logout-button').addEventListener('click', logout);
         document.getElementById('reset-progress').addEventListener('click', () => {
             if (!confirm(`${state.currentUser}, willst du wirklich deinen Fortschritt zurücksetzen?`)) return;
-            state.progress[state.currentUser] = { completed: [], code: {} };
+            state.progress[state.currentUser] = { completed: [], code: {}, taskStartTimes: {} };
             saveProgress();
             renderLevelMap();
         });
 
+        document.querySelectorAll('.world-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                const w = parseInt(tab.dataset.world, 10);
+                if (w !== state.currentWorld) {
+                    state.currentWorld = w;
+                    saveWorld(w);
+                    renderLevelMap();
+                }
+            });
+        });
+
         document.getElementById('back-to-map').addEventListener('click', () => {
             clearCanvas();
+            clearSolutionTimer();
             renderLevelMap();
             showScreen('map');
         });
@@ -644,8 +819,38 @@
         });
 
         document.getElementById('show-hint').addEventListener('click', () => {
-            const hint = document.getElementById('step-hint');
+            const lvl = LEVELS.find(l => l.id === state.currentLevelId);
+            if (!lvl) return;
+            const task = lvl.tasks[state.currentTaskIdx];
             const btn = document.getElementById('show-hint');
+
+            if (task.progressiveHints && task.progressiveHints.length > 0) {
+                // Progressives System: Klick zeigt naechsten Tipp
+                const container = document.getElementById('progressive-hints-container');
+                if (state.currentHintIdx >= task.progressiveHints.length) {
+                    // Schon alle gezeigt → toggle versteckt/sichtbar
+                    if (container.classList.contains('hidden')) {
+                        container.classList.remove('hidden');
+                        btn.textContent = 'Tipps ausblenden';
+                    } else {
+                        container.classList.add('hidden');
+                        btn.textContent = 'Tipps anzeigen';
+                    }
+                    return;
+                }
+                container.classList.remove('hidden');
+                renderProgressiveHint(state.currentHintIdx, task.progressiveHints[state.currentHintIdx]);
+                state.currentHintIdx += 1;
+                if (state.currentHintIdx < task.progressiveHints.length) {
+                    btn.textContent = `Nächster Tipp (${state.currentHintIdx}/${task.progressiveHints.length})`;
+                } else {
+                    btn.textContent = 'Tipps ausblenden';
+                }
+                return;
+            }
+
+            // Altes System
+            const hint = document.getElementById('step-hint');
             if (hint.classList.contains('hidden')) {
                 hint.classList.remove('hidden');
                 btn.textContent = 'Tipp ausblenden';
@@ -658,6 +863,16 @@
         const showSolutionBtn = document.getElementById('show-solution');
         if (showSolutionBtn) {
             showSolutionBtn.addEventListener('click', () => {
+                const lvl = LEVELS.find(l => l.id === state.currentLevelId);
+                if (!lvl) return;
+                const task = lvl.tasks[state.currentTaskIdx];
+                if (!isSolutionUnlocked(task, state.currentLevelId, state.currentTaskIdx)) {
+                    const userProg = getUserProgress();
+                    const start = userProg.taskStartTimes[getTaskKey(state.currentLevelId, state.currentTaskIdx)] || Date.now();
+                    const remaining = SOLUTION_UNLOCK_MS - (Date.now() - start);
+                    alert(`Die Lösung ist erst in ${formatCountdown(remaining)} verfügbar. Probier es solange mit den Tipps! Klicke „Tipp anzeigen" — jeder Tipp zeigt einen Code-Schnipsel mit einer kleinen Lücke, die du ausfüllen musst.`);
+                    return;
+                }
                 const card = document.getElementById('solution-card');
                 if (card.classList.contains('hidden')) {
                     card.classList.remove('hidden');
@@ -692,6 +907,7 @@
 
     function init() {
         state.progress = loadProgress();
+        state.currentWorld = loadWorld();
         renderProfileTiles();
         bindUI();
 

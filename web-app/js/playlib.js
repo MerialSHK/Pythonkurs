@@ -8,6 +8,17 @@
 (function (global) {
     'use strict';
 
+    // Python-Listen Methoden auf Array.prototype: append() und remove() so wie in Python.
+    if (!Array.prototype.append) {
+        Array.prototype.append = function (x) { this.push(x); };
+    }
+    if (!Array.prototype.remove) {
+        Array.prototype.remove = function (x) {
+            const idx = this.indexOf(x);
+            if (idx >= 0) this.splice(idx, 1);
+        };
+    }
+
     const COLORS = {
         white: '#ffffff', black: '#1f2330', gray: '#7a8294', 'dark gray': '#5b6477',
         'light gray': '#c9d1de', red: '#e34b5e', orange: '#f08a3e', yellow: '#f5b821',
@@ -54,10 +65,13 @@
             const aRight  = this.x + this.width / 2;
             const aBottom = this.y - this.height / 2;
             const aTop    = this.y + this.height / 2;
-            const bLeft   = other.x - other.width / 2;
-            const bRight  = other.x + other.width / 2;
-            const bBottom = other.y - other.height / 2;
-            const bTop    = other.y + other.height / 2;
+            // Punkt-im-Rechteck Test fuer mouse-Objekt (kein width/height)
+            const ow = (other.width != null) ? other.width : 0;
+            const oh = (other.height != null) ? other.height : 0;
+            const bLeft   = other.x - ow / 2;
+            const bRight  = other.x + ow / 2;
+            const bBottom = other.y - oh / 2;
+            const bTop    = other.y + oh / 2;
             return !(aRight < bLeft || aLeft > bRight || aTop < bBottom || aBottom > bTop);
         }
 
@@ -175,7 +189,7 @@
             keysDown: new Set(),
             startHandlers: [],
             loopHandlers: [],
-            mouse: { x: 0, y: 0, isClicked: false },
+            mouse: { x: 0, y: 0, isClicked: false, is_clicked: false },
             running: false,
             stopped: false,
             rafId: null,
@@ -218,6 +232,7 @@
             if (!state.running) return;
             onMouseMove(e);
             state.mouse.isClicked = true;
+            state.mouse.is_clicked = true;
             for (const sp of state.sprites) {
                 if (sp._destroyed || sp.is_hidden) continue;
                 if (sp._hitTest(state.mouse.x, state.mouse.y)) {
@@ -228,7 +243,7 @@
                 }
             }
         }
-        function onMouseUp() { state.mouse.isClicked = false; }
+        function onMouseUp() { state.mouse.isClicked = false; state.mouse.is_clicked = false; }
 
         window.addEventListener('keydown', onKeyDown);
         window.addEventListener('keyup', onKeyUp);

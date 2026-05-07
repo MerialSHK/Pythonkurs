@@ -140,6 +140,17 @@
                 indentStack.push({ indent, kind: 'block' });
                 continue;
             }
+            // for x in iterable:  -> for (const x of Array.from(iterable || [])) {
+            // Array.from-Kopie macht es sicher, falls die Liste in der Schleife
+            // mit .remove() modifiziert wird.
+            const forMatch = code.match(/^for\s+([A-Za-z_]\w*)\s+in\s+(.+):$/);
+            if (forMatch) {
+                const varName = forMatch[1];
+                const iter = transpileExpression(forMatch[2]);
+                out.push(`${' '.repeat(indent)}for (const ${varName} of Array.from((${iter}) || [])) {`);
+                indentStack.push({ indent, kind: 'block' });
+                continue;
+            }
 
             // return
             const retMatch = code.match(/^return(?:\s+(.+))?$/);

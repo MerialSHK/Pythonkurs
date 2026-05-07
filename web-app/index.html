@@ -54,6 +54,17 @@
                 </div>
             </header>
 
+            <div class="world-tabs" role="tablist">
+                <button class="world-tab active" data-world="1" role="tab">
+                    <span class="world-tab-num">1</span>
+                    <span class="world-tab-label">Level 1<br><small>Grundlagen</small></span>
+                </button>
+                <button class="world-tab" data-world="2" role="tab">
+                    <span class="world-tab-num">2</span>
+                    <span class="world-tab-label">Level 2<br><small>Spiele</small></span>
+                </button>
+            </div>
+
             <div class="map-grid" id="level-grid"></div>
 
             <div class="badges-card">
@@ -91,9 +102,17 @@
                         <h3 id="step-title">Aufgabe</h3>
                         <div id="step-description" class="step-description"></div>
                         <div id="step-hint" class="step-hint hidden"></div>
+                        <div id="progressive-hints-container" class="progressive-hints hidden"></div>
                         <div class="hint-buttons">
                             <button id="show-hint" class="ghost-btn small">Tipp anzeigen</button>
                             <button id="show-solution" class="ghost-btn small">Lösung anzeigen</button>
+                        </div>
+                        <div id="solution-lock" class="solution-lock hidden">
+                            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                                <rect x="5" y="11" width="14" height="9" rx="2"/>
+                                <path d="M8 11V7a4 4 0 0 1 8 0v4"/>
+                            </svg>
+                            <span>Lösung in <strong id="solution-countdown">15:00</strong> verfügbar — versuch's erst mit Tipps!</span>
                         </div>
                     </div>
 
