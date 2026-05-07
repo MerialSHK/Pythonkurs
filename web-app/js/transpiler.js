@@ -34,7 +34,7 @@
         let currentSrcLine = 0;
 
         function emit(text) {
-            emit(text);
+            out.push(text);
             srcMap.push(currentSrcLine);
         }
 
@@ -228,7 +228,13 @@
         // alle offenen Bloecke schliessen
         closeBlocksTo(-1);
 
-        return out.join('\n');
+        const js = out.join('\n');
+        return {
+            js: js,
+            map: srcMap,
+            toString() { return js; },
+            valueOf() { return js; }
+        };
     }
 
     function looksLikeComparison() { return false; }

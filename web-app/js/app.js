@@ -38,7 +38,9 @@
         selectedProfile: null,
         currentWorld: 1,
         currentHintIdx: 0,
-        solutionTimerInterval: null
+        solutionTimerInterval: null,
+        currentSourceMap: null,
+        errorLine: null
     };
 
     // -----------------------------------------------------------
@@ -347,6 +349,7 @@
             }
         }
 
+        clearErrorMarker();
         renderLineNumbers(editor.value);
         requestAnimationFrame(updateHorizontalScroll);
         document.getElementById('canvas-status').textContent = 'Drücke „Ausführen"';
@@ -387,9 +390,128 @@
     function renderLineNumbers(code) {
         const lines = code.split('\n').length;
         const ln = document.getElementById('line-numbers');
+        const errLine = state.errorLine;
         let html = '';
-        for (let i = 1; i <= Math.max(lines, 1); i++) html += i + '\n';
-        ln.textContent = html;
+        for (let i = 1; i <= Math.max(lines, 1); i++) {
+            if (errLine === i) {
+                html += `<span class="err-line">${i}</span>\n`;
+            } else {
+                html += i + '\n';
+            }
+        }
+        ln.innerHTML = html;
+    }
+
+    // -----------------------------------------------------------
+    //  ERROR-MARKER (rote Zeile + Tooltip wie in VS Code)
+    // -----------------------------------------------------------
+    function extractSourceLine(error) {
+        if (!error) return null;
+        const stack = error.stack ? String(error.stack) : '';
+        // Chrome: "at userMain (eval at runCode (...:NNN), <anonymous>:LINE:COL)"
+        // Probiere mehrere Patterns
+        let m = stack.match(/<anonymous>:(\d+):\d+/);
+        if (!m) m = stack.match(/Function:(\d+):\d+/);
+        if (!m) m = stack.match(/eval[^:]*:(\d+):\d+/);
+        if (!m && error.lineNumber != null) {
+            return mapJsLineToSourceLine(parseInt(error.lineNumber, 10));
+        }
+        if (!m) return null;
+        const wrappedLine = parseInt(m[1], 10);
+        return mapJsLineToSourceLine(wrappedLine);
+    }
+
+    // V8-Engines wrappen `new Function(body)` mit zusaetzlichen Header-Zeilen
+    // (z.B. `function anonymous(a, b\n) {`). Diese Probe ermittelt den Offset.
+    let _v8HeaderOffset = null;
+    function getV8HeaderOffset() {
+        if (_v8HeaderOffset != null) return _v8HeaderOffset;
+        try {
+            new Function('throw new Error("probe")')();
+        } catch (e) {
+            const m = String(e.stack || '').match(/<anonymous>:(\d+):/);
+            if (m) {
+                _v8HeaderOffset = parseInt(m[1], 10) - 1;
+                return _v8HeaderOffset;
+            }
+        }
+        _v8HeaderOffset = 2; // Fallback (Chrome/V8)
+        return _v8HeaderOffset;
+    }
+
+    function mapJsLineToSourceLine(wrappedLine) {
+        // wrappedLine = V8Header + meinHeader(2) + jsLine
+        const v8 = getV8HeaderOffset();
+        const myHeader = 2; // 'use strict;' + 'return (async function userMain() {'
+        const jsLine = wrappedLine - v8 - myHeader;
+        if (!state.currentSourceMap || jsLine < 1 || jsLine > state.currentSourceMap.length) {
+            return null;
+        }
+        const srcLine = state.currentSourceMap[jsLine - 1];
+        return (srcLine && srcLine > 0) ? srcLine : null;
+    }
+
+    function markErrorLine(lineNum, message) {
+        const editor = document.getElementById('code-editor');
+        const overlay = document.getElementById('editor-error-overlay');
+        const tooltip = document.getElementById('editor-error-tooltip');
+        if (!editor || !overlay || !tooltip) return;
+
+        state.errorLine = (typeof lineNum === 'number' && lineNum > 0) ? lineNum : null;
+        renderLineNumbers(editor.value);
+
+        if (!state.errorLine) {
+            overlay.classList.add('hidden');
+            if (message) {
+                tooltip.textContent = message;
+                tooltip.style.left = '60px';
+                tooltip.style.top = '8px';
+                tooltip.classList.remove('hidden');
+            } else {
+                tooltip.classList.add('hidden');
+            }
+            return;
+        }
+
+        positionErrorOverlay(message);
+    }
+
+    function positionErrorOverlay(message) {
+        const editor = document.getElementById('code-editor');
+        const overlay = document.getElementById('editor-error-overlay');
+        const tooltip = document.getElementById('editor-error-tooltip');
+        if (!editor || !overlay || !state.errorLine) return;
+
+        const cs = window.getComputedStyle(editor);
+        const lh = parseFloat(cs.lineHeight) || (parseFloat(cs.fontSize) * 1.6);
+        const padTop = parseFloat(cs.paddingTop) || 0;
+        const top = padTop + (state.errorLine - 1) * lh - editor.scrollTop;
+
+        overlay.style.top = top + 'px';
+        overlay.style.height = lh + 'px';
+        overlay.classList.remove('hidden');
+
+        if (tooltip && message != null) {
+            tooltip.textContent = message;
+            const wrapper = editor.parentElement;
+            const wrapperH = wrapper.clientHeight;
+            // Tooltip standardmaessig UNTER der Fehlerzeile, sonst darueber
+            let ttTop = top + lh + 4;
+            if (ttTop + 60 > wrapperH) ttTop = Math.max(8, top - 32);
+            tooltip.style.top = ttTop + 'px';
+            tooltip.style.left = '60px';
+            tooltip.classList.remove('hidden');
+        }
+    }
+
+    function clearErrorMarker() {
+        state.errorLine = null;
+        const overlay = document.getElementById('editor-error-overlay');
+        const tooltip = document.getElementById('editor-error-tooltip');
+        if (overlay) overlay.classList.add('hidden');
+        if (tooltip) tooltip.classList.add('hidden');
+        const editor = document.getElementById('code-editor');
+        if (editor) renderLineNumbers(editor.value);
     }
 
     function updateHorizontalScroll() {
@@ -451,6 +573,8 @@
         userProg.code[codeKey] = code;
         saveProgress();
 
+        clearErrorMarker();
+
         // Pruefung auf nicht ausgefuellte Luecken
         if (code.includes('___')) {
             const statusEl = document.getElementById('editor-status');
@@ -459,6 +583,14 @@
             statusEl.textContent = 'Du musst noch die Lücken (___) ausfüllen — schau dir den Tipp dazu an!';
             canvasStatusEl.className = 'canvas-status error';
             canvasStatusEl.textContent = 'Lücken offen';
+            // Erste Zeile mit ___ markieren
+            const lines = code.split('\n');
+            for (let i = 0; i < lines.length; i++) {
+                if (lines[i].includes('___')) {
+                    markErrorLine(i + 1, 'Hier fehlt noch ein Wert (___). Klicke „Tipp anzeigen" für Hilfe.');
+                    break;
+                }
+            }
             return;
         }
 
@@ -480,22 +612,26 @@
             statusEl.textContent = 'Laufzeit-Fehler: ' + (err.message || err);
             canvasStatusEl.className = 'canvas-status error';
             canvasStatusEl.textContent = 'Fehler im Code';
+            const srcLine = extractSourceLine(err);
+            markErrorLine(srcLine, err.message || String(err));
         });
 
         try {
-            const jsCode = PyTranspiler.transpile(code);
+            const tr = PyTranspiler.transpile(code);
+            const jsCode = tr.js;
+            state.currentSourceMap = tr.map;
             const builtins = PyTranspiler.builtins;
             const builtinNames = Object.keys(builtins);
             const builtinValues = builtinNames.map(n => builtins[n]);
-            const wrapped = `
-                "use strict";
-                return (async function userMain() {
-                    ${jsCode}
-                    if (typeof play !== 'undefined' && play.start_program) {
-                        await play.start_program();
-                    }
-                })();
-            `;
+            // WICHTIG: jede Zeile in wrapped zaehlt fuer den Stack-Trace.
+            // Header: "" + "use strict;" + "return (async function userMain() {" = 3 Zeilen.
+            // Wir schreiben den Header direkt darueber, damit jsCode-Zeile X = wrapped-Zeile X+3.
+            const wrapped =
+                '"use strict";\n' +
+                'return (async function userMain() {\n' +
+                jsCode + '\n' +
+                'if (typeof play !== \'undefined\' && play.start_program) { await play.start_program(); }\n' +
+                '})();';
             const fn = new Function('play', 'randint', ...builtinNames, wrapped);
             await fn(play, PlayLib.randint, ...builtinValues);
             statusEl.className = 'editor-statusbar';
@@ -508,6 +644,8 @@
             statusEl.textContent = 'Fehler: ' + (err.message || err);
             canvasStatusEl.className = 'canvas-status error';
             canvasStatusEl.textContent = 'Fehler im Code';
+            const srcLine = extractSourceLine(err);
+            markErrorLine(srcLine, err.message || String(err));
             console.error(err);
         }
 
@@ -601,6 +739,8 @@
             if (task.mode === 'type') {
                 renderGhost(task.targetCode, editor.value);
             }
+            // Beim Editieren Fehler-Markierung entfernen
+            if (state.errorLine != null) clearErrorMarker();
             renderLineNumbers(editor.value);
             updateHorizontalScroll();
             // Live-Speichern
@@ -626,13 +766,17 @@
             }
         });
 
-        // Scroll-Synchronisation: Zeilennummern + Ghost
+        // Scroll-Synchronisation: Zeilennummern + Ghost + Error-Overlay
         editor.addEventListener('scroll', () => {
             document.getElementById('line-numbers').scrollTop = editor.scrollTop;
             document.getElementById('ghost-layer').scrollTop = editor.scrollTop;
             document.getElementById('ghost-layer').scrollLeft = editor.scrollLeft;
             const slider = document.getElementById('editor-hscroll-slider');
             if (slider) slider.value = String(editor.scrollLeft);
+            if (state.errorLine != null) {
+                const tooltip = document.getElementById('editor-error-tooltip');
+                positionErrorOverlay(tooltip ? tooltip.textContent : '');
+            }
         });
 
         // Horizontaler Slider steuert Editor + Ghost gemeinsam
