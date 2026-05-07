@@ -27,17 +27,24 @@
     function transpile(source) {
         const lines = source.replace(/\r\n/g, '\n').split('\n');
         const out = [];
+        const srcMap = []; // srcMap[outIdx] = Input-Zeilennummer (1-based) oder 0
         const indentStack = [{ indent: -1, kind: 'root', globals: new Set() }];
 
         let pendingDecorators = [];
+        let currentSrcLine = 0;
+
+        function emit(text) {
+            emit(text);
+            srcMap.push(currentSrcLine);
+        }
 
         function closeBlocksTo(indent) {
             while (indentStack.length > 1 && indent <= indentStack[indentStack.length - 1].indent) {
                 const blk = indentStack.pop();
                 if (blk.kind === 'block' || blk.kind === 'fn') {
-                    out.push(' '.repeat(Math.max(0, blk.indent)) + '}');
+                    emit(' '.repeat(Math.max(0, blk.indent)) + '}');
                 } else if (blk.kind === 'fn-decorated') {
-                    out.push(' '.repeat(Math.max(0, blk.indent)) + '})');
+                    emit(' '.repeat(Math.max(0, blk.indent)) + '})');
                 }
             }
         }
@@ -52,7 +59,9 @@
             return false;
         }
 
-        for (let rawLine of lines) {
+        for (let lineIdx = 0; lineIdx < lines.length; lineIdx++) {
+            currentSrcLine = lineIdx + 1;
+            const rawLine = lines[lineIdx];
             const line = rawLine.replace(/\t/g, '    ');
             const stripped = line.replace(/\s+$/g, '');
             const indentMatch = stripped.match(/^(\s*)/);
@@ -60,23 +69,23 @@
             const content = stripped.trim();
 
             // leere Zeilen, Kommentare ohne Code -> einfach in Output kopieren (aber ohne Wirkung)
-            if (content === '') { out.push(''); continue; }
-            if (content.startsWith('#')) { out.push('// ' + content.slice(1)); continue; }
+            if (content === '') { emit(''); continue; }
+            if (content.startsWith('#')) { emit('// ' + content.slice(1)); continue; }
 
             // Kommentar am Zeilenende abschneiden (nur wenn # nicht in String)
             const codePart = stripCommentOutsideString(content);
             const code = codePart.trim();
-            if (code === '') { out.push('// ' + content); continue; }
+            if (code === '') { emit('// ' + content); continue; }
 
             // import / from -> ignorieren
-            if (/^(import|from)\s/.test(code)) { out.push('// ' + line); continue; }
+            if (/^(import|from)\s/.test(code)) { emit('// ' + line); continue; }
 
             closeBlocksTo(indent);
 
             // Decorators sammeln
             if (code.startsWith('@')) {
                 pendingDecorators.push(code.slice(1).trim());
-                out.push('// ' + line);
+                emit('// ' + line);
                 continue;
             }
 
@@ -90,11 +99,11 @@
                 if (pendingDecorators.length > 0) {
                     header = `${padding}${pendingDecorators[0]}(async function ${fnName}(${args}) {`;
                     pendingDecorators = [];
-                    out.push(header);
+                    emit(header);
                     indentStack.push({ indent, kind: 'fn-decorated', globals: new Set() });
                 } else {
                     header = `${padding}async function ${fnName}(${args}) {`;
-                    out.push(header);
+                    emit(header);
                     indentStack.push({ indent, kind: 'fn', globals: new Set() });
                 }
                 continue;
@@ -108,7 +117,7 @@
             // if / elif / else / while
             const ifMatch = code.match(/^if\s+(.+):$/);
             if (ifMatch) {
-                out.push(`${' '.repeat(indent)}if (${transpileExpression(ifMatch[1])}) {`);
+                emit(`${' '.repeat(indent)}if (${transpileExpression(ifMatch[1])}) {`);
                 indentStack.push({ indent, kind: 'block' });
                 continue;
             }
@@ -117,9 +126,9 @@
                 // schliesst vorigen if-Block
                 const prev = indentStack[indentStack.length - 1];
                 if (prev && prev.kind === 'block' && prev.indent === indent) {
-                    out.push(`${' '.repeat(indent)}} else if (${transpileExpression(elifMatch[1])}) {`);
+                    emit(`${' '.repeat(indent)}} else if (${transpileExpression(elifMatch[1])}) {`);
                 } else {
-                    out.push(`${' '.repeat(indent)}else if (${transpileExpression(elifMatch[1])}) {`);
+                    emit(`${' '.repeat(indent)}else if (${transpileExpression(elifMatch[1])}) {`);
                     indentStack.push({ indent, kind: 'block' });
                 }
                 continue;
@@ -127,16 +136,16 @@
             if (/^else\s*:$/.test(code)) {
                 const prev = indentStack[indentStack.length - 1];
                 if (prev && prev.kind === 'block' && prev.indent === indent) {
-                    out.push(`${' '.repeat(indent)}} else {`);
+                    emit(`${' '.repeat(indent)}} else {`);
                 } else {
-                    out.push(`${' '.repeat(indent)}else {`);
+                    emit(`${' '.repeat(indent)}else {`);
                     indentStack.push({ indent, kind: 'block' });
                 }
                 continue;
             }
             const whileMatch = code.match(/^while\s+(.+):$/);
             if (whileMatch) {
-                out.push(`${' '.repeat(indent)}while (${transpileExpression(whileMatch[1])}) {`);
+                emit(`${' '.repeat(indent)}while (${transpileExpression(whileMatch[1])}) {`);
                 indentStack.push({ indent, kind: 'block' });
                 continue;
             }
@@ -147,7 +156,7 @@
             if (forMatch) {
                 const varName = forMatch[1];
                 const iter = transpileExpression(forMatch[2]);
-                out.push(`${' '.repeat(indent)}for (const ${varName} of Array.from((${iter}) || [])) {`);
+                emit(`${' '.repeat(indent)}for (const ${varName} of Array.from((${iter}) || [])) {`);
                 indentStack.push({ indent, kind: 'block' });
                 continue;
             }
@@ -155,7 +164,7 @@
             // return
             const retMatch = code.match(/^return(?:\s+(.+))?$/);
             if (retMatch) {
-                out.push(`${' '.repeat(indent)}return ${transpileExpression(retMatch[1] || '')};`);
+                emit(`${' '.repeat(indent)}return ${transpileExpression(retMatch[1] || '')};`);
                 continue;
             }
 
@@ -170,17 +179,17 @@
                         break;
                     }
                 }
-                out.push(`${' '.repeat(indent)}/* global ${names.join(', ')} */`);
+                emit(`${' '.repeat(indent)}/* global ${names.join(', ')} */`);
                 continue;
             }
-            if (/^pass$/.test(code)) { out.push(`${' '.repeat(indent)};`); continue; }
-            if (/^break$/.test(code)) { out.push(`${' '.repeat(indent)}break;`); continue; }
-            if (/^continue$/.test(code)) { out.push(`${' '.repeat(indent)}continue;`); continue; }
+            if (/^pass$/.test(code)) { emit(`${' '.repeat(indent)};`); continue; }
+            if (/^break$/.test(code)) { emit(`${' '.repeat(indent)}break;`); continue; }
+            if (/^continue$/.test(code)) { emit(`${' '.repeat(indent)}continue;`); continue; }
 
             // await x
             const awaitMatch = code.match(/^await\s+(.+)$/);
             if (awaitMatch) {
-                out.push(`${' '.repeat(indent)}await ${transpileExpression(awaitMatch[1])};`);
+                emit(`${' '.repeat(indent)}await ${transpileExpression(awaitMatch[1])};`);
                 continue;
             }
 
@@ -190,7 +199,7 @@
                 const target = augMatch[1];
                 const op = augMatch[2];
                 const value = transpileExpression(augMatch[3]);
-                out.push(`${' '.repeat(indent)}${target} ${op} ${value};`);
+                emit(`${' '.repeat(indent)}${target} ${op} ${value};`);
                 continue;
             }
 
@@ -200,20 +209,20 @@
                 const target = assignMatch[1];
                 const value = transpileExpression(assignMatch[2]);
                 if (target.includes('.') || target.includes('[')) {
-                    out.push(`${' '.repeat(indent)}${target} = ${value};`);
+                    emit(`${' '.repeat(indent)}${target} = ${value};`);
                 } else if (isDeclaredGlobal(target)) {
                     // global-deklarierte Variable: ohne `var` zuweisen, damit
                     // die Variable im aeusseren Scope geaendert wird
-                    out.push(`${' '.repeat(indent)}${target} = ${value};`);
+                    emit(`${' '.repeat(indent)}${target} = ${value};`);
                 } else {
                     // Variable: erste Zuweisung mit `var` (toleriert Mehrfach-Zuweisung)
-                    out.push(`${' '.repeat(indent)}var ${target} = ${value};`);
+                    emit(`${' '.repeat(indent)}var ${target} = ${value};`);
                 }
                 continue;
             }
 
             // sonst: Ausdruck als Statement
-            out.push(`${' '.repeat(indent)}${transpileExpression(code)};`);
+            emit(`${' '.repeat(indent)}${transpileExpression(code)};`);
         }
 
         // alle offenen Bloecke schliessen
