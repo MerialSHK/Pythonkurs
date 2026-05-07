@@ -213,7 +213,7 @@
         const totalInWorld = visibleLevels.length;
         const doneInWorld = visibleLevels.filter(l => userProg.completed.includes(l.id)).length;
         document.getElementById('progress-summary').textContent =
-            `${doneInWorld} / ${totalInWorld} Level in Welt ${state.currentWorld} abgeschlossen`;
+            `${doneInWorld} / ${totalInWorld} Level in der ${state.currentWorld}. Einheit abgeschlossen`;
 
         renderBadges();
 
