@@ -902,7 +902,84 @@
             showScreen('map');
         });
 
+        bindCanvasResizer();
         bindEditor();
+    }
+
+    // -----------------------------------------------------------
+    //  CANVAS-RESIZER (Live-Vorschau groesser/kleiner ziehen)
+    // -----------------------------------------------------------
+    function bindCanvasResizer() {
+        const resizer = document.getElementById('canvas-resizer');
+        if (!resizer) return;
+        const main = document.querySelector('.level-main');
+        const SAVED_KEY = 'pythonkurs.canvasWidth';
+
+        // Gespeicherte Breite wiederherstellen
+        try {
+            const saved = parseInt(localStorage.getItem(SAVED_KEY), 10);
+            if (!isNaN(saved) && saved >= 280 && saved <= 1100) {
+                main.style.gridTemplateColumns = `320px minmax(0, 1fr) ${saved}px`;
+            }
+        } catch (e) {}
+
+        let dragging = false;
+        let startX = 0;
+        let startCanvasW = 0;
+
+        function getCanvasPanelWidth() {
+            const cp = document.querySelector('.canvas-panel');
+            return cp ? cp.getBoundingClientRect().width : 520;
+        }
+
+        function clampWidth(w) {
+            const mainRect = main.getBoundingClientRect();
+            const maxAllowed = Math.max(320, mainRect.width - 320 - 360);
+            return Math.max(280, Math.min(maxAllowed, w));
+        }
+
+        resizer.addEventListener('pointerdown', (e) => {
+            dragging = true;
+            startX = e.clientX;
+            startCanvasW = getCanvasPanelWidth();
+            resizer.classList.add('dragging');
+            document.body.style.userSelect = 'none';
+            try { resizer.setPointerCapture(e.pointerId); } catch (_) {}
+            e.preventDefault();
+        });
+
+        resizer.addEventListener('pointermove', (e) => {
+            if (!dragging) return;
+            // Drag nach LINKS (negatives delta) → canvas-panel breiter
+            const delta = startX - e.clientX;
+            const newW = clampWidth(startCanvasW + delta);
+            main.style.gridTemplateColumns = `320px minmax(0, 1fr) ${newW}px`;
+        });
+
+        function endDrag(e) {
+            if (!dragging) return;
+            dragging = false;
+            resizer.classList.remove('dragging');
+            document.body.style.userSelect = '';
+            try { resizer.releasePointerCapture(e.pointerId); } catch (_) {}
+            // Aktuelle Breite persistieren
+            try {
+                localStorage.setItem(SAVED_KEY, String(Math.round(getCanvasPanelWidth())));
+            } catch (_) {}
+            // Editor-Slider neu vermessen
+            if (typeof updateHorizontalScroll === 'function') {
+                requestAnimationFrame(updateHorizontalScroll);
+            }
+        }
+
+        resizer.addEventListener('pointerup', endDrag);
+        resizer.addEventListener('pointercancel', endDrag);
+
+        // Doppelklick auf den Resizer → auf Default zuruecksetzen
+        resizer.addEventListener('dblclick', () => {
+            main.style.gridTemplateColumns = '';
+            try { localStorage.removeItem(SAVED_KEY); } catch (_) {}
+        });
     }
 
     function init() {

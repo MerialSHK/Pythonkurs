@@ -1093,12 +1093,56 @@ button {
 .canvas-status.success { color: var(--success); }
 .canvas-status.error { color: var(--error); }
 
+.canvas-panel {
+    position: relative;
+}
+
+.canvas-resizer {
+    position: absolute;
+    left: -4px;
+    top: 0;
+    bottom: 0;
+    width: 10px;
+    cursor: col-resize;
+    z-index: 20;
+    background: transparent;
+    transition: background .15s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    touch-action: none;
+}
+
+.canvas-resizer-grip {
+    width: 4px;
+    height: 64px;
+    background: rgba(79, 109, 245, 0.0);
+    border-radius: 2px;
+    transition: background .15s ease, transform .15s ease;
+}
+
+.canvas-resizer:hover .canvas-resizer-grip,
+.canvas-resizer.dragging .canvas-resizer-grip {
+    background: rgba(79, 109, 245, 0.85);
+    transform: scaleX(1.4);
+}
+
+.canvas-resizer:hover {
+    background: rgba(79, 109, 245, 0.08);
+}
+
+.canvas-resizer.dragging {
+    background: rgba(79, 109, 245, 0.16);
+}
+
 .canvas-wrapper {
     position: relative;
     display: flex;
     align-items: center;
     justify-content: center;
     padding: 18px;
+    flex: 1;
+    min-height: 0;
 }
 
 #play-canvas {
@@ -1106,7 +1150,10 @@ button {
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
     box-shadow: var(--shadow-md);
+    width: 100%;
+    height: auto;
     max-width: 100%;
+    aspect-ratio: 520 / 420;
 }
 
 .canvas-overlay {
