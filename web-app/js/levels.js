@@ -106,9 +106,27 @@ box = play.new_box(color='red', x=180, y=0, width=80, height=80)</pre>
                     hint: `So baust du es Stück für Stück:
 1) Schreibe unter den Titel: spieler = play.new_text(words='O_O', x=0, y=0, font_size=60, color='black')
 2) Eine Zeile drunter: kreis = play.new_circle(color='blue', x=-180, y=0, radius=40)
-3) Wieder eine Zeile drunter: box = play.new_box(color='red', x=180, y=0, width=80, height=80)
-4) Variablen-Namen MÜSSEN exakt 'spieler', 'kreis' und 'box' heißen — sonst findet die Pruefung sie nicht.
-5) Klick „Ausführen".`,
+3) Wieder eine Zeile drunter: box = play.new_box(color='red', x=180, y=0, width=80, height=80)`,
+                    progressiveHints: [
+                        {
+                            title: 'Spieler-Text erstellen',
+                            codeTemplate: `spieler = play.new_text(words='___', x=0, y=0, font_size=60, color='black')`,
+                            blankHint: 'Was soll der Spieler anzeigen? Z.B. ein Smiley wie O_O',
+                            explanation: 'Der Spieler ist ein Text-Sprite. Trag ein paar Zeichen ein — Smileys gehen auch.'
+                        },
+                        {
+                            title: 'Kreis links erstellen',
+                            codeTemplate: `kreis = play.new_circle(color='___', x=-180, y=0, radius=40)`,
+                            blankHint: 'Eine Farbe deiner Wahl — z.B. blue, red oder green.',
+                            explanation: 'Der Kreis steht links (x=-180). Setze seine Farbe ein.'
+                        },
+                        {
+                            title: 'Box rechts erstellen',
+                            codeTemplate: `box = play.new_box(color='red', x=180, y=0, width=___, height=80)`,
+                            blankHint: 'Wie breit soll die Box sein? Z.B. 80 Pixel.',
+                            explanation: 'Die Box steht rechts. Trag eine Breite ein — 80 passt gut.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `titel = play.new_text(words='Mein Spielfeld', x=0, y=180, font_size=28, color='blue')
@@ -180,11 +198,30 @@ box = play.new_box(color='red', x=180, y=0, width=80, height=80)
                         </ul>
                         <p>Klicke nach dem Ausführen ins Spielfeld und drücke die Pfeiltasten.</p>
                     `,
-                    hint: `Schreibe noch DREI weitere if-Blöcke unter den ersten:
-1) if play.key_is_pressed('down'):  →  in der Zeile drunter mit 8 Leerzeichen Einrueckung: spieler.y -= 5
-2) if play.key_is_pressed('left'):  →  spieler.x -= 5
-3) if play.key_is_pressed('right'): →  spieler.x += 5
-WICHTIG: Die if-Zeile hat 4 Leerzeichen vor dem 'if', die Bewegungs-Zeile darunter 8 Leerzeichen.`,
+                    hint: `Schreibe noch DREI weitere if-Blöcke unter den ersten — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'Pfeiltaste runter (down)',
+                            codeTemplate: `    if play.key_is_pressed('___'):
+        spieler.y -= 5`,
+                            blankHint: 'Pfeiltaste nach unten heisst: down',
+                            explanation: 'Block in den repeat_forever (4 Leerzeichen vor if, 8 vor der Bewegung). Trag den Tastennamen ein.'
+                        },
+                        {
+                            title: 'Pfeiltaste links (left)',
+                            codeTemplate: `    if play.key_is_pressed('left'):
+        spieler.x -= ___`,
+                            blankHint: 'Wie viele Pixel pro Schritt? Z.B. 5.',
+                            explanation: 'Bei links wird x kleiner. Trag die Schrittweite ein.'
+                        },
+                        {
+                            title: 'Pfeiltaste rechts (right)',
+                            codeTemplate: `    if play.key_is_pressed('right'):
+        spieler.x += ___`,
+                            blankHint: 'Gleiche Schrittweite wie bei links — z.B. 5.',
+                            explanation: 'Bei rechts wird x groesser. Selbe Schrittweite einsetzen.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `spieler = play.new_text(words='O_O', x=0, y=0, font_size=60, color='black')
@@ -265,13 +302,29 @@ def spielschleife():
     punkte.words = 'Punkte: ' + str(score)</pre>
                         <p>Schreibe einen <strong>zweiten</strong> Block, der dasselbe macht, wenn <code>spieler.y</code> zu gross oder zu klein wird.</p>
                     `,
-                    hint: `Kopiere die Struktur vom x-Block, ändere x auf y:
-1) if spieler.y > 200 or spieler.y < -200:    (4 Leerzeichen Einrückung)
-2)     spieler.x = 0                          (8 Leerzeichen)
-3)     spieler.y = 0
-4)     score += 1
-5)     punkte.words = 'Punkte: ' + str(score)
-str(score) wandelt die Zahl in einen Text um, damit man sie an 'Punkte: ' anhängen kann.`,
+                    hint: `Kopiere die Struktur vom x-Block, ändere x auf y — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'if-Block fuer den oberen/unteren Rand',
+                            codeTemplate: `    if spieler.y > 200 or spieler.y < ___:`,
+                            blankHint: 'Untere Grenze ist das Spiegel-Bild von 200 — also: -200',
+                            explanation: 'Wenn der Spieler oben oder unten anstoesst, soll der Block ausloesen. Trag die untere Grenze ein.'
+                        },
+                        {
+                            title: 'Spieler zuruecksetzen',
+                            codeTemplate: `        spieler.x = 0
+        spieler.y = ___`,
+                            blankHint: 'Mitte des Spielfelds — also: 0',
+                            explanation: 'Der Spieler springt auf die Mitte zurueck. Trag den y-Wert der Mitte ein.'
+                        },
+                        {
+                            title: 'Punkt zaehlen + Anzeige',
+                            codeTemplate: `        score += ___
+        punkte.words = 'Punkte: ' + str(score)`,
+                            blankHint: 'Pro Wand-Treffer ein Punkt — also: 1',
+                            explanation: 'Score erhoehen und die Anzeige aktualisieren.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -378,12 +431,28 @@ def spielschleife():
 ziel.y = play.random_number(-150, 150)</pre>
                         <p>Vervollständige unten den Block <code>if spieler.is_touching(ziel):</code>.</p>
                     `,
-                    hint: `Schreibe DREI Zeilen mit jeweils 8 Leerzeichen Einrückung in den if-Block:
-1) score += 5
-2) punkte.words = 'Punkte: ' + str(score)
-3) ziel.x = play.random_number(-200, 200)
-4) ziel.y = play.random_number(-150, 150)
-play.random_number(a, b) gibt eine Zufallszahl zwischen a und b zurück.`,
+                    hint: `Vier Zeilen in den if-Block — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'Punkte erhoehen + Anzeige',
+                            codeTemplate: `        score += ___
+        punkte.words = 'Punkte: ' + str(score)`,
+                            blankHint: 'Pro Treffer 5 Punkte — trag also 5 ein.',
+                            explanation: 'In den if-Block (8 Leerzeichen Einrueckung). Score steigt, Anzeige updated.'
+                        },
+                        {
+                            title: 'Ziel an zufaelliges x',
+                            codeTemplate: `        ziel.x = play.random_number(-___, 200)`,
+                            blankHint: 'Symmetrisch zur 200 auf der anderen Seite — also: 200',
+                            explanation: 'Das Ziel springt nach links/rechts auf einen Zufallspunkt zwischen -200 und 200.'
+                        },
+                        {
+                            title: 'Ziel an zufaelliges y',
+                            codeTemplate: `        ziel.y = play.random_number(___, 150)`,
+                            blankHint: 'Untere Grenze ist das Negativ der oberen — also: -150',
+                            explanation: 'Auch nach oben/unten zufaellig.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -486,11 +555,28 @@ def spielschleife():
                             <li><code>stern.x</code> mit <code>play.random_number(-220, 220)</code> setzen</li>
                         </ul>
                     `,
-                    hint: `Im if-Block (8 Leerzeichen Einrückung) brauchst du 4 Zeilen:
-1) score += 1
-2) punkte.words = 'Punkte: ' + str(score)
-3) stern.y = 200    (zurück nach ganz oben)
-4) stern.x = play.random_number(-220, 220)    (neue zufällige x-Position)`,
+                    hint: `Vier Zeilen mit 8 Leerzeichen Einrueckung — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'Punkt zaehlen + Anzeige',
+                            codeTemplate: `        score += ___
+        punkte.words = 'Punkte: ' + str(score)`,
+                            blankHint: 'Pro gefangenem Stern ein Punkt — also: 1',
+                            explanation: 'In den if korb.is_touching(stern)-Block (8 Leerzeichen Einrueckung).'
+                        },
+                        {
+                            title: 'Stern wieder nach oben',
+                            codeTemplate: `        stern.y = ___`,
+                            blankHint: 'Ganz oben am Bildschirm — also: 200',
+                            explanation: 'Damit der Stern wieder von oben faellt, y zuruecksetzen.'
+                        },
+                        {
+                            title: 'Neue zufaellige x-Position',
+                            codeTemplate: `        stern.x = play.random_number(___, 220)`,
+                            blankHint: 'Linke Grenze: -220',
+                            explanation: 'Damit der Stern nicht immer an der gleichen Stelle erscheint.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -593,12 +679,28 @@ def spielschleife():
                         </ul>
                         <p><strong>Bereich:</strong> <code>x</code> zwischen <code>-200</code> und <code>200</code>, <code>y</code> zwischen <code>-130</code> und <code>130</code>.</p>
                     `,
-                    hint: `Drei Zeilen direkt unter "global score" (4 Leerzeichen Einrückung):
-1) score += 1
-2) punkte.words = 'Punkte: ' + str(score)
-3) maulwurf.x = play.random_number(-200, 200)
-4) maulwurf.y = play.random_number(-130, 130)
-@maulwurf.when_clicked sorgt dafür, dass die Funktion bei jedem Klick auf den Maulwurf läuft.`,
+                    hint: `Vier Zeilen unter global score — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'Score und Anzeige',
+                            codeTemplate: `    score += ___
+    punkte.words = 'Punkte: ' + str(score)`,
+                            blankHint: 'Pro Treffer ein Punkt — also: 1',
+                            explanation: '4 Leerzeichen Einrueckung (innerhalb der Funktion). Score steigt, Anzeige updated.'
+                        },
+                        {
+                            title: 'Maulwurf-Sprung x',
+                            codeTemplate: `    maulwurf.x = play.random_number(-___, 200)`,
+                            blankHint: 'Linke Grenze ist das Negativ von 200 — also: 200',
+                            explanation: 'Der Maulwurf springt zu einer Zufallsposition.'
+                        },
+                        {
+                            title: 'Maulwurf-Sprung y',
+                            codeTemplate: `    maulwurf.y = play.random_number(-130, ___)`,
+                            blankHint: 'Obere Grenze passend zu -130 — also: 130',
+                            explanation: 'Auch nach oben/unten zufaellig.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -677,12 +779,23 @@ if ball.y < -200:
     ball_vy = abs(ball_vy)</pre>
                         <p>Damit zeigt <code>ball_vy</code> immer in die richtige Richtung — nach oben oder nach unten.</p>
                     `,
-                    hint: `Genau die zwei Blöcke aus dem Beispiel reichen:
-1)  if ball.y > 200:                 ← 4 Leerzeichen
-2)      ball_vy = -abs(ball_vy)      ← 8 Leerzeichen
-3)  if ball.y < -200:                ← 4 Leerzeichen
-4)      ball_vy = abs(ball_vy)       ← 8 Leerzeichen
-abs(x) macht eine Zahl IMMER positiv. Mit dem Minus davor wird sie immer negativ.`,
+                    hint: `Zwei if-Bloecke fuer oben und unten — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'Oberer Wand-Abprall',
+                            codeTemplate: `    if ball.y > ___:
+        ball_vy = -abs(ball_vy)`,
+                            blankHint: 'Obere Grenze des Spielfelds — z.B. 200.',
+                            explanation: '4 Leerzeichen vor if, 8 vor der Zuweisung. -abs(...) sorgt dafuer, dass die Geschwindigkeit nach unten zeigt.'
+                        },
+                        {
+                            title: 'Unterer Wand-Abprall',
+                            codeTemplate: `    if ball.y < -200:
+        ball_vy = abs(___)`,
+                            blankHint: 'Variable, die wir umdrehen — also: ball_vy',
+                            explanation: 'abs() macht den Wert positiv, also nach oben.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `ball_vx = 5
@@ -817,11 +930,28 @@ def spielschleife():
                             <li><code>apfel.y</code> auf <code>play.random_number(-180, 180)</code></li>
                         </ul>
                     `,
-                    hint: `Vier Zeilen mit je 8 Leerzeichen Einrückung in den if-Block:
-1) score += 1
-2) punkte.words = 'Punkte: ' + str(score)
-3) apfel.x = play.random_number(-220, 220)
-4) apfel.y = play.random_number(-180, 180)`,
+                    hint: `Vier Zeilen in den Apfel-Block — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'Punkt + Anzeige',
+                            codeTemplate: `        score += ___
+        punkte.words = 'Punkte: ' + str(score)`,
+                            blankHint: 'Pro Apfel ein Punkt — also: 1',
+                            explanation: 'In den if kopf.is_touching(apfel)-Block (8 Leerzeichen Einrueckung).'
+                        },
+                        {
+                            title: 'Apfel an zufaelliges x',
+                            codeTemplate: `        apfel.x = play.random_number(-220, ___)`,
+                            blankHint: 'Symmetrisch zu -220 — also: 220',
+                            explanation: 'Apfel springt zu einer neuen x-Position.'
+                        },
+                        {
+                            title: 'Apfel an zufaelliges y',
+                            codeTemplate: `        apfel.y = play.random_number(___, 180)`,
+                            blankHint: 'Untere Grenze passend zu 180 — also: -180',
+                            explanation: 'Auch zufaellig nach oben/unten.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -1020,11 +1150,33 @@ def klick_gruen():
         naechste_runde()</pre>
                         <p>Und genau dasselbe für <code>blau</code> (mit <code>'blau'</code> im Vergleich).</p>
                     `,
-                    hint: `Kopier den Block für 'rot' zweimal und ändere drei Stellen:
-1) Decorator: @gruen.when_clicked  bzw.  @blau.when_clicked
-2) Funktionsname: def klick_gruen():  bzw.  def klick_blau():
-3) Im if-Vergleich: ziel_farbe == 'gruen'  bzw.  ziel_farbe == 'blau'
-Alle anderen Zeilen bleiben gleich.`,
+                    hint: `Zwei neue Klick-Funktionen — siehe Tipps.`,
+                    progressiveHints: [
+                        {
+                            title: 'Klick-Funktion fuer gruen',
+                            codeTemplate: `@gruen.when_clicked
+def klick_gruen():
+    global score
+    if ziel_farbe == '___':
+        score += 1
+        punkte.words = 'Punkte: ' + str(score)
+        naechste_runde()`,
+                            blankHint: 'Vergleichswert ist die Farbe — also: gruen',
+                            explanation: 'Diese Funktion prueft, ob aktuell gruen verlangt war. Trag den Vergleichs-String ein.'
+                        },
+                        {
+                            title: 'Klick-Funktion fuer blau',
+                            codeTemplate: `@blau.when_clicked
+def klick_blau():
+    global score
+    if ziel_farbe == 'blau':
+        score += ___
+        punkte.words = 'Punkte: ' + str(score)
+        naechste_runde()`,
+                            blankHint: 'Pro richtigem Klick ein Punkt — also: 1',
+                            explanation: 'Genau wie gruen, nur fuer blau. Score-Erhoehung einsetzen.'
+                        }
+                    ],
                     mode: 'fill',
                     initialCode:
 `score = 0
@@ -1149,25 +1301,20 @@ def klick_blau():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Wuerfel als Box erstellen',
-                        codeTemplate: `wuerfel = play.new_box(color='___', x=0, y=0, width=140, height=140, border_color='black', border_width=3)`,
-                        blankHint: 'Trag eine helle Farbe ein, z.B. white oder yellow.',
-                        explanation: 'Der Wuerfel ist eine Box. Setze die Fuell-Farbe ein.'
+                        title: 'So sehen Box und Text als Sprite aus',
+                        codeTemplate: `# Beispiel fuer eine Box (groesse, Position, Rahmen):
+beispiel = play.new_box(color='light blue', x=0, y=200, width=80, height=40, border_color='black', border_width=2)`,
+                        blankHint: 'Bau jetzt selbst den Wuerfel: Variable wuerfel, Position (0,0), eine helle Farbe deiner Wahl, Groesse 140x140 mit schwarzem Rand. Dazu einen Text zahl_text in der Mitte mit einem Fragezeichen.',
+                        explanation: 'Hier siehst du wie eine Box geht. Bau Wuerfel und Anzeige-Text damit selbst.'
                     },
                     {
-                        title: 'Text fuer die Wuerfel-Zahl',
-                        codeTemplate: `zahl_text = play.new_text(words='___', x=0, y=0, font_size=80, color='black')`,
-                        blankHint: 'Ein Fragezeichen, also einfach: ?',
-                        explanation: 'Vor dem ersten Wurf zeigt der Wuerfel ein Symbol. Fuege es ein.'
-                    },
-                    {
-                        title: 'Klick-Funktion: Zufallszahl + Text aendern',
-                        codeTemplate: `@wuerfel.when_clicked
-def wurf():
-    zahl = randint(1, ___)
-    zahl_text.words = str(zahl)`,
-                        blankHint: 'Ein Wuerfel hat 6 Seiten — also: 6.',
-                        explanation: 'Bei jedem Klick wird eine Zahl gezogen und im Text angezeigt.'
+                        title: 'So funktioniert ein Klick-Handler',
+                        codeTemplate: `# Beispiel: Klick aendert eine Box-Farbe
+@beispiel.when_clicked
+def reagieren():
+    beispiel.color = 'orange'`,
+                        blankHint: 'Schreibe jetzt eine Funktion, die bei einem Klick auf wuerfel eine Zufallszahl mit randint(...) holt und sie mit str(...) in zahl_text.words schreibt.',
+                        explanation: 'Klick-Handler folgen immer diesem Muster: @sprite.when_clicked + def funktion():. Was drin steht, entscheidest du.'
                     }
                 ],
                 mode: 'fill',
@@ -1232,40 +1379,33 @@ def wurf():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Drei Lampen als Kreise',
-                        codeTemplate: `rot = play.new_circle(color='___', x=0, y=120, radius=40)
-gelb = play.new_circle(color='yellow', x=0, y=30, radius=40)
-gruen = play.new_circle(color='green', x=0, y=-60, radius=40)`,
-                        blankHint: 'Die Farbe der oberen Lampe — natuerlich red.',
-                        explanation: 'Drei Kreise uebereinander als Ampel. Setze die Farbe der roten Lampe ein.'
+                        title: 'Beispiel: die rote Lampe',
+                        codeTemplate: `# Erste Lampe als Muster:
+rot = play.new_circle(color='red', x=0, y=120, radius=40)`,
+                        blankHint: 'Bau nach dem gleichen Schema die gelbe Lampe (gelb, weiter unten bei y=30) und die gruene Lampe (noch weiter unten bei y=-60). Die Variablennamen muessen gelb und gruen heissen.',
+                        explanation: 'Du siehst wie ein Kreis geht. Mach jetzt die anderen zwei Lampen analog — Position untereinander stapeln.'
                     },
                     {
-                        title: 'Schalter-Box und globale Phase',
-                        codeTemplate: `phase = 0
+                        title: 'Schalter und Zaehler-Variable',
+                        codeTemplate: `# Globale Variable + Schalter-Box mit Beschriftung:
+phase = 0
 schalter = play.new_box(color='gray', x=0, y=-160, width=180, height=40)
 schalter_txt = play.new_text(words='Schalter', x=0, y=-160, font_size=18, color='white')`,
-                        blankHint: 'Keine Luecke — schau dir den Code an und uebernimm ihn 1:1.',
-                        explanation: 'Eine Variable phase startet bei 0. Klick darauf zaehlt sie hoch.'
+                        blankHint: 'Schreib das so ab. Wichtig: phase startet bei 0 und merkt sich, welche Lampe gerade leuchtet.',
+                        explanation: 'Schalter ist eine Box, dazu ein Text drueber. Die Variable phase ist global, weil sie spaeter in der Klick-Funktion geaendert wird.'
                     },
                     {
-                        title: 'Klick-Handler mit if/elif',
-                        codeTemplate: `@schalter.when_clicked
+                        title: 'Hinweis zum Klick-Handler',
+                        codeTemplate: `# So beginnt der Klick-Handler — vervollstaendige ihn selbst:
+@schalter.when_clicked
 def weiter():
     global phase
     phase = phase + 1
-    if phase > ___:
-        phase = 0
-    rot.transparency = 30
-    gelb.transparency = 30
-    gruen.transparency = 30
-    if phase == 0:
-        rot.transparency = 100
-    if phase == 1:
-        gelb.transparency = 100
-    if phase == 2:
-        gruen.transparency = 100`,
-                        blankHint: 'Wir haben 3 Phasen (0, 1, 2). Wenn phase groesser als 2 ist, zurueck zu 0. Also: 2.',
-                        explanation: 'Bei jedem Klick: phase um 1 hoch, alle Lampen dunkel, dann eine hell.'
+    # ... fehlt: phase zurueck auf 0 wenn > 2
+    # ... fehlt: alle Lampen dunkel (transparency = 30)
+    # ... fehlt: aktive Lampe hell (transparency = 100, mit if phase == 0/1/2)`,
+                        blankHint: 'Vervollstaendige die Funktion: erst phase begrenzen (wenn > 2 dann zurueck zu 0), dann alle Lampen dunkel machen, dann je nach phase EINE Lampe wieder hell.',
+                        explanation: 'Drei Schritte in der Funktion: 1) Begrenzung der phase, 2) alle Lampen dunkel, 3) eine Lampe hell mit drei if-Bloecken. transparency = 100 ist hell, transparency = 30 ist dunkel.'
                     }
                 ],
                 mode: 'fill',
@@ -1349,39 +1489,40 @@ def weiter():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Box und Hinweis-Text erstellen',
-                        codeTemplate: `bereit = False
-box = play.new_box(color='___', x=0, y=0, width=200, height=200)
-status = play.new_text(words='Warte...', x=0, y=-150, font_size=20, color='gray')`,
-                        blankHint: 'Anfangsfarbe der Box — sie wartet noch, also red.',
-                        explanation: 'Die Variable bereit speichert, ob der Klick zaehlt. Box startet rot.'
+                        title: 'Setup: globale Variable, Box und Status-Text',
+                        codeTemplate: `# Du brauchst:
+# 1) globale Variable bereit, die mit False startet
+# 2) eine grosse rote Box namens box (200x200)
+# 3) einen status-Text unterhalb, der "Warte..." anzeigt
+bereit = False`,
+                        blankHint: 'Schreib jetzt: die Box als play.new_box(...) mit color rot und Groesse 200x200, und einen status-Text mit play.new_text(...) bei y=-150.',
+                        explanation: 'Drei Sachen brauchst du oben. Die Variable bereit ist gegeben — Box und Text musst du selbst hinzufuegen.'
                     },
                     {
-                        title: 'Programm-Start: warten und gruen werden',
-                        codeTemplate: `@play.when_program_starts
+                        title: 'Beispiel: warten und etwas aendern beim Programm-Start',
+                        codeTemplate: `# Muster: warte zufaellig zwischen 1 und 3 Sekunden, dann mach was:
+@play.when_program_starts
 async def start():
     global bereit
-    await play.timer(seconds=randint(1, ___))
-    box.color = 'green'
-    status.words = 'JETZT!'
-    bereit = True`,
-                        blankHint: 'Maximale Wartezeit. 3 Sekunden ist ein guter Wert.',
-                        explanation: 'Beim Start wird zufaellig 1 bis ? Sekunden gewartet, dann wird die Box gruen.'
+    await play.timer(seconds=randint(1, 3))
+    # ... was passiert nach dem Warten?`,
+                        blankHint: 'Vervollstaendige die Funktion: Box-Farbe auf gruen, status.words auf "JETZT!", und bereit = True. Dann darf der Klick zaehlen.',
+                        explanation: 'Du siehst wie await play.timer(...) funktioniert. Trag die Aktionen ein, die nach dem Warten passieren sollen.'
                     },
                     {
-                        title: 'Klick-Reaktion auf die Box',
-                        codeTemplate: `@box.when_clicked
+                        title: 'Hinweis zum Klick-Handler',
+                        codeTemplate: `# Skelett — fuelle den Inhalt selbst:
+@box.when_clicked
 def klick():
     global bereit
     if bereit:
-        status.words = '___'
-        box.color = 'blue'
-        bereit = False
+        # ... Erfolg: Box blau, status "Super!" oder aehnlich, bereit wieder False
+        pass
     else:
-        status.words = 'Zu frueh!'
-        box.color = 'orange'`,
-                        blankHint: 'Eine kurze Erfolgs-Botschaft, z.B. Super! oder Geschafft!',
-                        explanation: 'Klickt der Spieler waehrend gruen → Erfolg. Sonst → zu frueh.'
+        # ... Zu frueh: Box orange, status "Zu frueh!"
+        pass`,
+                        blankHint: 'Ersetze die beiden pass-Zeilen durch echten Code (drei Zuweisungen pro Zweig).',
+                        explanation: 'if bereit ist gut → Erfolg-Logik einbauen. else (zu frueh geklickt) → andere Reaktion.'
                     }
                 ],
                 mode: 'fill',
@@ -1461,45 +1602,30 @@ def klick():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Score und Aufgaben-Text',
+                        title: 'Setup: Score und Aufgaben-Text',
                         codeTemplate: `score = 0
 score_anzeige = play.new_text(words='Punkte: 0', x=0, y=180, font_size=20, color='black')
 aufgabe = play.new_text(words='5 + 3 = ?', x=0, y=80, font_size=36, color='black')`,
-                        blankHint: 'Keine Luecke — uebernimm 1:1.',
-                        explanation: 'Globale Variable score und zwei Texte oben am Bildschirm.'
+                        blankHint: 'Schreib das so ab. score muss global sein (oben definiert).',
+                        explanation: 'Score-Variable und zwei Anzeige-Texte. Aufgabe ist fest 5+3.'
                     },
                     {
-                        title: 'Drei Antwort-Buttons',
-                        codeTemplate: `b6 = play.new_box(color='light blue', x=-120, y=-50, width=80, height=60)
-t6 = play.new_text(words='6', x=-120, y=-50, font_size=30, color='black')
-b7 = play.new_box(color='light blue', x=0, y=-50, width=80, height=60)
-t7 = play.new_text(words='___', x=0, y=-50, font_size=30, color='black')
-b8 = play.new_box(color='light blue', x=120, y=-50, width=80, height=60)
-t8 = play.new_text(words='8', x=120, y=-50, font_size=30, color='black')`,
-                        blankHint: 'Auf dem mittleren Button steht 7 — also: 7',
-                        explanation: 'Drei Buttons mit den Werten 6, 7 und 8.'
+                        title: 'Beispiel: ein Antwort-Button (b6 mit Text 6)',
+                        codeTemplate: `# Erster Button als Muster:
+b6 = play.new_box(color='light blue', x=-120, y=-50, width=80, height=60)
+t6 = play.new_text(words='6', x=-120, y=-50, font_size=30, color='black')`,
+                        blankHint: 'Bau jetzt analog zwei weitere Buttons: b7 mit Text "7" bei x=0, und b8 mit Text "8" bei x=120. Variablennamen muessen exakt b7, t7, b8, t8 sein.',
+                        explanation: 'Du siehst Box + Text als Button-Paar. Mach das gleiche fuer 7 und 8 — nur x-Position aendert sich.'
                     },
                     {
-                        title: 'Klick-Funktionen: richtig/falsch',
-                        codeTemplate: `@b8.when_clicked
-def richtig():
-    global score
-    score = score + ___
-    score_anzeige.words = 'Punkte: ' + str(score)
-
-@b6.when_clicked
+                        title: 'Beispiel: Klick-Funktion fuer FALSCHE Antwort (b6)',
+                        codeTemplate: `@b6.when_clicked
 def falsch1():
     global score
     score = score - 1
-    score_anzeige.words = 'Punkte: ' + str(score)
-
-@b7.when_clicked
-def falsch2():
-    global score
-    score = score - 1
     score_anzeige.words = 'Punkte: ' + str(score)`,
-                        blankHint: 'Pro richtiger Antwort gibt es einen Punkt — also: 1.',
-                        explanation: '5+3=8 ist richtig (b8). Bei den anderen geht ein Punkt verloren.'
+                        blankHint: 'Schreib jetzt analog: eine Funktion fuer b7 (auch falsch, score - 1) und eine fuer b8 (das ist die richtige! score + 1).',
+                        explanation: '5+3 ist 8 — also b8 ist richtig. Mach drei Klick-Funktionen: zwei mit score - 1, eine (b8) mit score + 1.'
                     }
                 ],
                 mode: 'fill',
@@ -1582,31 +1708,26 @@ def falsch2():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Leere Liste fuer die Tasten',
-                        codeTemplate: `tasten = ___`,
-                        blankHint: 'Eine leere Liste schreibt man mit zwei eckigen Klammern: []',
-                        explanation: 'Wir brauchen eine Liste, in die wir spaeter alle Tasten reinhaengen.'
+                        title: 'Beispiel: ein einzelner Sprite mit for-Schleife',
+                        codeTemplate: `# Muster: 5 Kreise nebeneinander mit einer for-Schleife
+kreise = []
+for i in range(5):
+    k = play.new_circle(color='red', x=-100 + i*50, y=180, radius=10)
+    kreise.append(k)`,
+                        blankHint: 'Bau jetzt eine analoge for-Schleife: Liste tasten = [], dann 8 weisse Boxen erzeugen (width=42, height=140) mit schwarzem Rand. Position berechnen: -175 + i*50.',
+                        explanation: 'Du siehst wie man mit einer for-Schleife mehrere Sprites macht und in einer Liste sammelt. Mach das gleiche fuer 8 Klaviertasten.'
                     },
                     {
-                        title: 'For-Schleife: 8 Tasten erstellen',
-                        codeTemplate: `for i in range(___):
-    taste_x = -175 + i * 50
-    taste = play.new_box(color='white', x=taste_x, y=0, width=42, height=140, border_color='black', border_width=2)
-    tasten.append(taste)`,
-                        blankHint: 'Anzahl der Tasten — wir wollen 8.',
-                        explanation: 'Acht Mal: Position berechnen, Box erstellen, in Liste einhaengen.'
-                    },
-                    {
-                        title: 'Klick-Handler fuer jede Taste',
-                        codeTemplate: `@play.repeat_forever
+                        title: 'Beispiel: Klick-Erkennung auf einen einzelnen Sprite',
+                        codeTemplate: `# Muster: Pruefe pro Frame ob die Maus auf einem Sprite klickt
+@play.repeat_forever
 async def schleife():
-    for t in tasten:
-        if play.mouse.is_clicked and t.is_touching(play.mouse):
-            t.color = '___'
-            await play.timer(seconds=0.2)
-            t.color = 'white'`,
-                        blankHint: 'Eine Aufleucht-Farbe, z.B. yellow oder orange.',
-                        explanation: 'Bei Klick auf eine Taste: Farbe wechseln, kurz warten, zurueck zu weiss.'
+    if play.mouse.is_clicked and beispiel.is_touching(play.mouse):
+        beispiel.color = 'orange'
+        await play.timer(seconds=0.2)
+        beispiel.color = 'white'`,
+                        blankHint: 'Schreib es ab, aber mit einer for-Schleife: for t in tasten: pruefe jede Taste ob sie geklickt ist, leuchte sie kurz auf (z.B. yellow) und mach sie wieder weiss.',
+                        explanation: 'Statt nur einen Sprite zu pruefen, gehst du in einer for-Schleife durch ALLE tasten — pruefe jede einzelne mit dem gleichen Muster.'
                     }
                 ],
                 mode: 'fill',
@@ -1679,42 +1800,37 @@ async def schleife():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Korb, Score und Eier-Liste',
-                        codeTemplate: `score = 0
-score_text = play.new_text(words='Eier: 0', x=200, y=185, font_size=18, color='black')
-korb = play.new_box(color='brown', x=0, y=-180, width=100, height=20)
-eier = []
-frame = 0`,
-                        blankHint: 'Keine Luecke — nur abtippen.',
-                        explanation: 'Der Korb ist eine Box unten. Liste eier startet leer, frame zaehlt mit.'
+                        title: 'Setup: was du oben brauchst',
+                        codeTemplate: `# Fuenf Sachen ganz oben:
+# - score = 0
+# - score_text mit "Eier: 0" als play.new_text(...)
+# - korb als braune Box (y=-180, 100x20)
+# - eier = []  (leere Liste)
+# - frame = 0  (Zaehler fuer Spawns)`,
+                        blankHint: 'Schreib diese 5 Zeilen selbst. score und frame sind einfache Zahlen, eier eine leere Liste, korb und score_text sind Sprites.',
+                        explanation: 'Das Setup-Ziel ist klar — schreib die einzelnen Zeilen selbst. score und frame brauchst du spaeter als global in der Funktion.'
                     },
                     {
-                        title: 'Spielschleife: Korb bewegen, neues Ei spawnen',
-                        codeTemplate: `@play.repeat_forever
+                        title: 'Beispiel: Korb mit Pfeil-LINKS-Taste bewegen',
+                        codeTemplate: `# So beginnt deine Spielschleife:
+@play.repeat_forever
 def schleife():
     global frame, score
     frame = frame + 1
-    if play.key_is_pressed('___'):
-        korb.x = korb.x - 5
-    if play.key_is_pressed('right'):
-        korb.x = korb.x + 5
-    if frame % 60 == 0:
-        ei = play.new_circle(color='white', x=randint(-240, 240), y=200, radius=15, border_color='gray', border_width=2)
-        eier.append(ei)`,
-                        blankHint: 'Pfeiltaste nach links — der Name ist: left',
-                        explanation: 'Pro Frame: Korb bewegen. Alle 60 Frames neues Ei oben.'
+    if play.key_is_pressed('left'):
+        korb.x = korb.x - 5`,
+                        blankHint: 'Ergaenze: Pfeil-RECHTS analog (korb.x + 5). Und: alle 60 Frames ein neues Ei spawnen — pruefe mit if frame % 60 == 0:, mache play.new_circle bei zufaelligem x (randint(-240, 240)) ganz oben (y=200), und haeng es mit eier.append(ei) in die Liste.',
+                        explanation: 'Du siehst das Muster fuer Tasten-Steuerung. Vervollstaendige rechts-Bewegung und Ei-Spawn analog.'
                     },
                     {
-                        title: 'Eier fallen lassen + Kollision pruefen',
-                        codeTemplate: `    for ei in eier:
-        ei.y = ei.y - ___
-        if ei.is_touching(korb):
-            ei.hide()
-            eier.remove(ei)
-            score = score + 1
-            score_text.words = 'Eier: ' + str(score)`,
-                        blankHint: 'Die Fall-Geschwindigkeit pro Frame, z.B. 3.',
-                        explanation: 'Diese Zeilen kommen am Ende der schleife()-Funktion mit 4 Leerzeichen Einrueckung. Eier fallen und werden im Korb gefangen.'
+                        title: 'Hinweis: Eier fallen + Kollision pruefen',
+                        codeTemplate: `# Am Ende der schleife()-Funktion (4 Leerzeichen Einrueckung):
+    for ei in eier:
+        # ... Ei nach unten bewegen (y wird kleiner)
+        # ... wenn ei.is_touching(korb): aufraeumen + score zaehlen
+        pass`,
+                        blankHint: 'Schreib die zwei Aktionen: 1) ei.y = ei.y - 3 (Fall-Schritt), 2) Wenn der Korb das Ei beruehrt: ei.hide(), eier.remove(ei), score erhoehen, score_text.words updaten.',
+                        explanation: 'Die for-Schleife geht jedes Frame durch alle Eier. Pro Ei: bewegen, dann pruefen ob es im Korb gelandet ist.'
                     }
                 ],
                 mode: 'fill',
@@ -1799,41 +1915,36 @@ def schleife():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Frosch und Autos in einer Liste',
-                        codeTemplate: `frosch = play.new_circle(color='green', x=0, y=-180, radius=18)
-auto1 = play.new_box(color='red', x=0, y=-80, width=70, height=30)
-auto2 = play.new_box(color='blue', x=-100, y=0, width=70, height=30)
-auto3 = play.new_box(color='orange', x=100, y=80, width=70, height=30)
-autos = [auto1, auto2, auto3]
-status = play.new_text(words='Komm hoch!', x=0, y=185, font_size=18, color='black')`,
-                        blankHint: 'Keine Luecke — abtippen.',
-                        explanation: 'Frosch unten, drei Autos auf drei Spuren, Liste autos.'
+                        title: 'Beispiel: Frosch und EIN Auto',
+                        codeTemplate: `# Frosch unten in der Mitte:
+frosch = play.new_circle(color='green', x=0, y=-180, radius=18)
+# Erstes Auto als Muster (untere Spur):
+auto1 = play.new_box(color='red', x=0, y=-80, width=70, height=30)`,
+                        blankHint: 'Bau jetzt analog zwei weitere Autos: auto2 (blau, mittlere Spur y=0) und auto3 (orange, obere Spur y=80). Sammle alle drei in einer Liste autos = [auto1, auto2, auto3]. Und einen status-Text oben mit "Komm hoch!".',
+                        explanation: 'Du siehst Frosch + ein Auto. Mach analog die anderen zwei Autos und stecke sie in eine Liste — plus den Status-Text oben.'
                     },
                     {
-                        title: 'Frosch-Steuerung mit Pfeiltasten',
-                        codeTemplate: `@play.repeat_forever
+                        title: 'Hinweis: Spielschleife mit Pfeiltasten',
+                        codeTemplate: `# Skelett — vervollstaendige selbst:
+@play.repeat_forever
 def schleife():
-    if play.key_is_pressed('___'):
-        frosch.y = frosch.y + 3
-    if play.key_is_pressed('down'):
-        frosch.y = frosch.y - 3
-    if frosch.y > 200:
-        status.words = 'Geschafft!'
-        frosch.y = -180`,
-                        blankHint: 'Pfeiltaste nach oben heisst: up',
-                        explanation: 'Pfeil nach oben: Frosch geht hoch. Wenn er ganz oben ist: Erfolg, zurueck zum Start.'
+    # ... wenn Pfeil-OBEN: frosch.y groesser
+    # ... wenn Pfeil-UNTEN: frosch.y kleiner
+    # ... wenn frosch.y > 200: status auf "Geschafft!", frosch.y = -180
+    pass`,
+                        blankHint: 'Schreib drei if-Bloecke: play.key_is_pressed(\'up\') / \'down\' fuer Bewegung (frosch.y +/- 3), und einen Check ob er oben angekommen ist (Reset auf -180 + Status-Text).',
+                        explanation: 'Drei einfache if-Bloecke fuer hoch, runter und das Erreichen des oberen Rands.'
                     },
                     {
-                        title: 'Autos bewegen + Wrap + Kollision',
-                        codeTemplate: `    for auto in autos:
-        auto.x = auto.x + 4
-        if auto.x > 270:
-            auto.x = ___
-        if auto.is_touching(frosch):
-            frosch.y = -180
-            status.words = 'Aua! Nochmal!'`,
-                        blankHint: 'Wenn das Auto rechts raus ist, soll es links wieder rein. Linke Bildschirmkante: -270.',
-                        explanation: 'Diese Zeilen kommen am Ende der schleife() mit 4 Leerzeichen Einrueckung.'
+                        title: 'Hinweis: Autos bewegen + Wrap + Kollision',
+                        codeTemplate: `# Am Ende der schleife() in einer for-Schleife durch autos:
+    for auto in autos:
+        # ... Auto nach rechts bewegen (auto.x + 4)
+        # ... wenn auto.x > 270: zurueck nach links bei x = -270 (Wrap)
+        # ... wenn auto.is_touching(frosch): Frosch zurueck auf -180, Status "Aua!"
+        pass`,
+                        blankHint: 'Drei Aktionen pro Auto: 1) auto.x = auto.x + 4 (bewegen), 2) Wenn rechts raus → auto.x = -270 (Wrap-around), 3) Wenn Beruehrung mit Frosch → Frosch resetten + Status updaten.',
+                        explanation: 'Die for-Schleife geht durch alle drei Autos und macht fuer jedes das gleiche Muster.'
                     }
                 ],
                 mode: 'fill',
@@ -1911,55 +2022,50 @@ def schleife():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Score-Variablen und Karte-Anzeige',
-                        codeTemplate: `dein_score = 0
+                        title: 'Setup: drei globale Variablen + drei Texte',
+                        codeTemplate: `# Drei Zaehler-Variablen:
+dein_score = 0
 comp_score = 0
-zuege = 0
-score_txt = play.new_text(words='Du: 0  /  Comp: 0', x=0, y=180, font_size=22, color='black')
-karte = play.new_text(words='?', x=0, y=20, font_size=80, color='blue')
-status = play.new_text(words='Klick einen Button', x=0, y=-180, font_size=18, color='gray')`,
-                        blankHint: 'Keine Luecke — abtippen.',
-                        explanation: 'Globale Scores, Zaehler fuer Spieler-Zuege, Karte als grosser Text.'
+zuege = 0`,
+                        blankHint: 'Schreib jetzt selbst drei play.new_text(...): score_txt oben (zeigt "Du: 0  /  Comp: 0"), karte in der Mitte (gross, font_size=80, mit "?"), und status unten ("Klick einen Button").',
+                        explanation: 'Setup hat zwei Teile: Variablen (gegeben) und drei Anzeige-Texte (musst du selbst schreiben).'
                     },
                     {
-                        title: 'Buttons unten erstellen',
-                        codeTemplate: `b_zieh = play.new_box(color='green', x=-110, y=-110, width=180, height=50)
-t_zieh = play.new_text(words='Karte ziehen', x=-110, y=-110, font_size=18, color='white')
-b_comp = play.new_box(color='red', x=110, y=-110, width=180, height=50)
-t_comp = play.new_text(words='Computer fordern', x=110, y=-110, font_size=16, color='white')`,
-                        blankHint: 'Keine Luecke — abtippen.',
-                        explanation: 'Zwei farbige Buttons mit Beschriftung.'
+                        title: 'Beispiel: ein Button (Karte ziehen)',
+                        codeTemplate: `# Erster Button als Muster (gruen, links unten):
+b_zieh = play.new_box(color='green', x=-110, y=-110, width=180, height=50)
+t_zieh = play.new_text(words='Karte ziehen', x=-110, y=-110, font_size=18, color='white')`,
+                        blankHint: 'Bau analog den zweiten Button: b_comp (rot, x=110) mit Text t_comp ("Computer fordern", font_size=16). Box+Text Paar genau wie oben.',
+                        explanation: 'Zwei Buttons brauchst du. Der erste ist gegeben, mach den zweiten analog auf der rechten Seite.'
                     },
                     {
-                        title: 'Klick: Karte ziehen',
-                        codeTemplate: `@b_zieh.when_clicked
+                        title: 'Hinweis: Klick "Karte ziehen"',
+                        codeTemplate: `# Skelett — vervollstaendige selbst:
+@b_zieh.when_clicked
 def ziehen():
     global dein_score, zuege
-    zahl = randint(1, ___)
-    karte.words = str(zahl)
-    dein_score = dein_score + zahl
-    zuege = zuege + 1
-    score_txt.words = 'Du: ' + str(dein_score) + '  /  Comp: ' + str(comp_score)
-    if dein_score > 21:
-        status.words = 'Du hast verloren! (ueber 21)'`,
-                        blankHint: 'Karten gehen bis 11 (As). Trag 11 ein.',
-                        explanation: 'Bei jedem Klick: Zufalls-Karte ziehen, Score erhoehen, Bust pruefen.'
+    # ... eine Karte ziehen mit randint(1, 11)
+    # ... Karten-Text aktualisieren (karte.words = str(zahl))
+    # ... dein_score erhoehen, zuege erhoehen
+    # ... score_txt aktualisieren
+    # ... wenn dein_score > 21: status auf "Du hast verloren!"
+    pass`,
+                        blankHint: 'Schreib die fuenf Aktionen aus: zahl mit randint(1, 11), karte.words = str(zahl), dein_score und zuege jeweils + 1 bzw. + zahl, score_txt mit String-Verknuepfung, dann der Bust-Check.',
+                        explanation: 'Beim Klick: Karte ziehen, Score erhoehen, anzeigen, und pruefen ob der Spieler ueber 21 ist.'
                     },
                     {
-                        title: 'Klick: Computer fordern',
-                        codeTemplate: `@b_comp.when_clicked
+                        title: 'Hinweis: Klick "Computer fordern"',
+                        codeTemplate: `# Computer zieht so oft wie der Spieler — Skelett:
+@b_comp.when_clicked
 def computer_zug():
     global comp_score
-    for i in range(zuege):
-        zahl = randint(1, 11)
-        comp_score = comp_score + zahl
-    score_txt.words = 'Du: ' + str(dein_score) + '  /  Comp: ' + str(comp_score)
-    if comp_score > 21 or comp_score < dein_score:
-        status.words = 'Du hast gewonnen!'
-    else:
-        status.words = 'Computer gewinnt!'`,
-                        blankHint: 'Keine Luecke — abtippen.',
-                        explanation: 'Computer zieht so oft wie der Spieler. Vergleich entscheidet.'
+    # ... in einer for-Schleife "zuege"-mal eine Zufallskarte ziehen
+    # ... comp_score erhoehen
+    # ... score_txt aktualisieren
+    # ... Vergleich: wer gewinnt?
+    pass`,
+                        blankHint: 'Bau die for-Schleife: for i in range(zuege): zahl = randint(1, 11), comp_score erhoehen. Dann score_txt updaten und mit if/elif/else entscheiden: wenn comp_score > 21 oder kleiner als dein_score → gewonnen, sonst verloren.',
+                        explanation: 'Schwerster Teil: Computer zieht in einer Schleife, dann Vergleich beider Scores.'
                     }
                 ],
                 mode: 'fill',
@@ -2054,60 +2160,49 @@ def computer_zug():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Paddle, Ball und Geschwindigkeit',
-                        codeTemplate: `paddle = play.new_box(color='blue', x=0, y=-180, width=120, height=18)
-ball = play.new_circle(color='red', x=0, y=0, radius=12)
-ball_vx = 4
-ball_vy = -4
-status = play.new_text(words='Zerstoere alle Bloecke!', x=0, y=185, font_size=16, color='black')`,
-                        blankHint: 'Keine Luecke — abtippen.',
-                        explanation: 'Paddle und Ball erstellen, Ball-Geschwindigkeiten setzen.'
+                        title: 'Setup: Paddle, Ball, Geschwindigkeiten',
+                        codeTemplate: `# Brauchst du oben:
+# - paddle: blaue Box unten (y=-180, 120x18)
+# - ball: roter Kreis in der Mitte (radius 12)
+# - ball_vx und ball_vy: zwei Geschwindigkeits-Variablen (z.B. 4 und -4)
+# - status: Text oben mit "Zerstoere alle Bloecke!"`,
+                        blankHint: 'Schreib diese 5 Zeilen selbst. ball_vx steuert die horizontale Bewegung, ball_vy die vertikale (negativ = nach oben).',
+                        explanation: 'Setup ohne Code-Beispiel — du kennst schon play.new_box / play.new_circle aus den letzten Levels.'
                     },
                     {
-                        title: 'Block-Raster mit verschachtelten Schleifen',
-                        codeTemplate: `blocks = []
-for reihe in range(___):
-    for spalte in range(5):
-        bx = -200 + spalte * 100
-        by = 140 - reihe * 35
-        block = play.new_box(color='orange', x=bx, y=by, width=90, height=25, border_color='dark gray', border_width=1)
-        blocks.append(block)`,
-                        blankHint: 'Wir wollen 2 Reihen — also: 2',
-                        explanation: 'Aeussere Schleife = Reihen, innere = Spalten. 2 mal 5 = 10 Bloecke.'
+                        title: 'Beispiel: EINE for-Schleife fuer Bloecke in einer Reihe',
+                        codeTemplate: `# Muster: 5 Bloecke nebeneinander in einer Reihe:
+blocks = []
+for spalte in range(5):
+    bx = -200 + spalte * 100
+    block = play.new_box(color='orange', x=bx, y=140, width=90, height=25, border_color='dark gray', border_width=1)
+    blocks.append(block)`,
+                        blankHint: 'Bau das jetzt zu einem RASTER um: nimm noch eine aeussere for-Schleife "for reihe in range(2):" drumherum. Berechne by = 140 - reihe * 35 (verschiedene y-Werte pro Reihe). So bekommst du 2 Reihen mit je 5 Bloecken.',
+                        explanation: 'Du siehst, wie eine Reihe geht. Pack das in eine zweite for-Schleife rein → verschachtelt → Block-Raster.'
                     },
                     {
-                        title: 'Spielschleife: Paddle, Ball, Wand-Bounce',
+                        title: 'Hinweis: Spielschleife mit Ball und Paddle',
                         codeTemplate: `@play.repeat_forever
 def schleife():
     global ball_vx, ball_vy
-    if play.key_is_pressed('left'):
-        paddle.x = paddle.x - 6
-    if play.key_is_pressed('right'):
-        paddle.x = paddle.x + 6
-    ball.x = ball.x + ball_vx
-    ball.y = ball.y + ball_vy
-    if ball.x > 250 or ball.x < -250:
-        ball_vx = -1 * ball_vx
-    if ball.y > 200:
-        ball_vy = -1 * ball_vy
-    if ball.is_touching(paddle):
-        ball_vy = abs(ball_vy)`,
-                        blankHint: 'Keine Luecke — abtippen.',
-                        explanation: 'Ball bewegt sich, prallt von Wand und Paddle ab.'
+    # ... Paddle nach links/rechts mit Pfeiltasten (paddle.x +/- 6)
+    # ... Ball bewegen: ball.x += ball_vx, ball.y += ball_vy
+    # ... Wand-Abprall: wenn ball.x > 250 oder < -250: ball_vx umdrehen
+    # ... wenn ball.y > 200: ball_vy umdrehen (nach unten)
+    # ... wenn ball.is_touching(paddle): ball_vy = abs(ball_vy)  (nach oben)`,
+                        blankHint: 'Schreibe die 5 Bloecke aus den Kommentaren. ball_vx = -1 * ball_vx dreht die x-Geschwindigkeit um. abs(...) macht garantiert positiv.',
+                        explanation: 'Pong-Erfahrung aus Level 8! Hier mit zusaetzlicher x-Bewegung. Schreib es Schritt fuer Schritt nach den Kommentaren.'
                     },
                     {
-                        title: 'Block-Kollisionen + Win/Lose',
-                        codeTemplate: `    for b in blocks:
-        if b.is_touching(ball):
-            b.hide()
-            blocks.remove(b)
-            ball_vy = -1 * ball_vy
-    if ball.y < -210:
-        status.words = 'Verloren!'
-    if len(blocks) == ___:
-        status.words = 'GEWONNEN!'`,
-                        blankHint: 'Wenn die Liste leer ist, hat der Spieler gewonnen. Eine leere Liste hat Laenge: 0',
-                        explanation: 'Diese Zeilen am Ende der schleife() (4 Leerzeichen Einrueckung). Block-Treffer entfernt Block, leere Liste = Win.'
+                        title: 'Hinweis: Block-Treffer + Sieg/Niederlage',
+                        codeTemplate: `# Am Ende der schleife() (4 Leerzeichen Einrueckung):
+    for b in blocks:
+        # ... wenn b.is_touching(ball): Block ausblenden, aus Liste raus, Ball abprallen
+        pass
+    # ... wenn ball.y < -210: status = "Verloren!"
+    # ... wenn len(blocks) == 0: status = "GEWONNEN!"`,
+                        blankHint: 'Im for-Block: b.hide(), blocks.remove(b), ball_vy = -1 * ball_vy. Danach zwei if-Bloecke fuer Niederlage (Ball faellt unten raus) und Sieg (Liste leer).',
+                        explanation: 'Letzter Teil — Treffer-Logik und Spiel-Ende. Pruefe pro Frame ob alle Bloecke weg sind oder der Ball durchgefallen ist.'
                     }
                 ],
                 mode: 'fill',
@@ -2206,44 +2301,39 @@ def schleife():
                 `,
                 progressiveHints: [
                     {
-                        title: 'Sechs Karten und ihre Farben in Listen',
-                        codeTemplate: `karten = []
+                        title: 'Beispiel: 3 Karten mit for-Schleife',
+                        codeTemplate: `# Muster fuer 3 graue Karten nebeneinander:
+karten = []
 farben = ['red', 'red', 'blue', 'blue', 'green', 'green']
-
-for i in range(___):
-    karte = play.new_box(color='gray', x=-200 + i*80, y=0, width=70, height=100, border_color='black', border_width=2)
-    karten.append(karte)`,
-                        blankHint: 'Sechs Karten — also: 6',
-                        explanation: 'Liste karten haelt die Box-Sprites, Liste farben die zugehoerigen Farben.'
+for i in range(3):
+    k = play.new_box(color='gray', x=-100 + i*80, y=0, width=70, height=100, border_color='black', border_width=2)
+    karten.append(k)`,
+                        blankHint: 'Bau das auf 6 Karten um: range(6) statt range(3), und Start-x bei -200 statt -100. Die Liste farben mit 6 Farb-Eintraegen ist schon gegeben — uebernimm sie genauso.',
+                        explanation: 'Du siehst das Muster fuer 3 Karten. Skalierst du es auf 6, hast du das ganze Spielfeld.'
                     },
                     {
-                        title: 'Zustands-Variablen',
-                        codeTemplate: `erste_idx = -1
+                        title: 'Zustands-Variablen + Status-Text',
+                        codeTemplate: `# Diese drei Zeilen brauchst du noch oben:
+erste_idx = -1
 zweite_idx = -1
 status = play.new_text(words='Finde alle Paare!', x=0, y=160, font_size=20, color='black')`,
-                        blankHint: 'Keine Luecke — abtippen.',
-                        explanation: 'erste_idx merkt sich, welche Karte zuerst geklickt wurde (-1 = keine).'
+                        blankHint: 'Schreib es so ab. -1 bedeutet "noch keine Karte aufgedeckt". Diese zwei Variablen merken sich Klicks zwischen den Frames.',
+                        explanation: 'Die Indizes zeigen, welche Karten gerade offen sind. status zeigt die Botschaft an.'
                     },
                     {
-                        title: 'Klick-Behandlung in der Spielschleife',
+                        title: 'Hinweis: Klick-Logik in der Spielschleife',
                         codeTemplate: `@play.repeat_forever
 async def schleife():
     global erste_idx, zweite_idx
     for i in range(6):
+        # Pruefe ob auf karten[i] geklickt wird UND ob sie noch grau (verdeckt) ist
         if play.mouse.is_clicked and karten[i].is_touching(play.mouse) and karten[i].color == 'gray':
-            karten[i].color = farben[i]
-            if erste_idx == -1:
-                erste_idx = i
-            else:
-                zweite_idx = i
-                await play.timer(seconds=___)
-                if farben[erste_idx] != farben[zweite_idx]:
-                    karten[erste_idx].color = 'gray'
-                    karten[zweite_idx].color = 'gray'
-                erste_idx = -1
-                zweite_idx = -1`,
-                        blankHint: 'Wartezeit nach dem zweiten Klick. 0.6 oder 0.8 Sekunden ist gut.',
-                        explanation: 'Pro Frame: Pruefe alle 6 Karten. Erster Klick → merken. Zweiter → vergleichen, ggf. zurueck verdecken.'
+            # ... karte aufdecken: karten[i].color = farben[i]
+            # ... wenn erste_idx == -1: erste_idx = i  (erste Karte gemerkt)
+            # ... sonst: zweite_idx = i, kurz warten, vergleichen, ggf. wieder grau machen
+            pass`,
+                        blankHint: 'Im if-Block: 1) karten[i].color = farben[i] (aufdecken). 2) Verzweigung mit if/else: erste_idx == -1 → erste_idx merken. else → zweite_idx merken, await play.timer(seconds=0.7), wenn farben verschieden beide wieder grau, dann beide Indizes zurueck auf -1.',
+                        explanation: 'Schwierigster Teil: zwei verschiedene Verhalten je nach erstem oder zweitem Klick. Bei "ungleich" werden beide nach kurzer Wartezeit wieder grau.'
                     }
                 ],
                 mode: 'fill',
