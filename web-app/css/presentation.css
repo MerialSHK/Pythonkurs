@@ -240,30 +240,34 @@
 .pres-footer .ghost-btn { min-width: 110px; }
 .pres-footer .primary-btn { min-width: 150px; justify-content: center; }
 
-/* „Das kannst du sagen"-Box ------------------------------------ */
+/* Vortrags-Karte (hervorgehobener Satz zum Vorlesen) ----------- */
 .pres-say {
-    background: var(--primary-soft);
+    position: relative;
+    background: linear-gradient(180deg, #ffffff 0%, var(--primary-soft) 100%);
     border: 1px solid #d3ddfb;
-    border-left: 4px solid var(--pres-accent);
+    border-left: 5px solid var(--pres-accent);
     border-radius: var(--radius-md);
-    padding: 14px 16px;
+    padding: 16px 20px 16px 22px;
     margin-top: 18px;
+    box-shadow: var(--shadow-sm);
 }
-.pres-say-label {
-    display: block;
-    font-size: 12.5px;
-    font-weight: 700;
-    color: var(--primary-strong);
-    text-transform: uppercase;
-    letter-spacing: 0.04em;
-    margin-bottom: 6px;
+.pres-say-quote {
+    position: absolute;
+    top: 2px;
+    left: 12px;
+    font-size: 40px;
+    line-height: 1;
+    color: var(--pres-accent);
+    opacity: 0.35;
+    font-family: Georgia, 'Times New Roman', serif;
 }
 .pres-say-text {
     margin: 0;
-    font-size: 16px;
+    padding-left: 24px;
+    font-size: 17.5px;
     line-height: 1.6;
-    color: #2c3654;
-    font-style: italic;
+    color: #1f2740;
+    font-weight: 500;
 }
 
 /* Schritt 1 — Titel -------------------------------------------- */

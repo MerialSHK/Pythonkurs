@@ -44,13 +44,14 @@
         return (lvl && lvl.concepts) ? lvl.concepts : [];
     }
 
-    // „Das kannst du sagen"-Box
+    // Vortrags-Karte: hervorgehobener Satz, den das Kind vorliest.
+    // Bewusst OHNE Meta-Label ("Das kannst du sagen"), weil die Eltern
+    // denselben Bildschirm sehen — der Satz soll wie ein natürlicher
+    // Teil der Präsentation wirken.
     function sayBox(text) {
         const box = el('div', 'pres-say');
-        const label = el('span', 'pres-say-label', '💬 Das kannst du sagen:');
-        const p = el('p', 'pres-say-text', text);
-        box.appendChild(label);
-        box.appendChild(p);
+        box.appendChild(el('span', 'pres-say-quote', '“'));
+        box.appendChild(el('p', 'pres-say-text', text));
         return box;
     }
 
