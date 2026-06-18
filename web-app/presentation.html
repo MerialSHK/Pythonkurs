@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Abschlusspräsentation — Python Spiele-Kurs</title>
+    <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/presentation.css" />
+</head>
+<body class="presentation-body">
+    <div id="pres-app">
+
+        <!-- ============ ÜBERSICHT ============ -->
+        <section id="overview-screen" class="pres-screen active">
+            <header class="pres-overview-header">
+                <div class="pres-brand">
+                    <svg class="brand-icon" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M16 28 L8 36 L16 44" />
+                        <path d="M48 28 L56 36 L48 44" />
+                        <path d="M38 22 L26 50" />
+                    </svg>
+                    <div>
+                        <h1>Abschlusspräsentation</h1>
+                        <p class="pres-subtitle">Wähle dein Spiel und starte deine Präsentation</p>
+                    </div>
+                </div>
+                <a class="ghost-btn" href="index.html">Zum Kurs</a>
+            </header>
+
+            <div class="pres-howto">
+                <strong>So funktioniert's:</strong> Klick auf deine Karte. Dann führt dich die Präsentation Schritt für Schritt durch:
+                <span class="pres-step-chip">1 · Titel</span>
+                <span class="pres-step-chip">2 · Spiel zeigen</span>
+                <span class="pres-step-chip">3 · Die Figuren</span>
+                <span class="pres-step-chip">4 · Der Code</span>
+                <span class="pres-step-chip">5 · Abschluss</span>
+                In jedem Schritt steht in der blauen Box, <em>was du sagen kannst</em> — du musst nichts auswendig können.
+            </div>
+
+            <h2 class="pres-group-title">Die Kinder &amp; ihre Spiele</h2>
+            <div id="kids-grid" class="pres-card-grid"></div>
+
+            <h2 class="pres-group-title">Reserve-Spiele <small>(zum Tauschen)</small></h2>
+            <div id="reserve-grid" class="pres-card-grid"></div>
+        </section>
+
+        <!-- ============ PRÄSENTATION ============ -->
+        <section id="pres-screen" class="pres-screen">
+            <header class="pres-header">
+                <button id="pres-exit" class="ghost-btn">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+                    Übersicht
+                </button>
+                <div class="pres-header-title">
+                    <span id="pres-emoji" class="pres-header-emoji">🎮</span>
+                    <div>
+                        <h2 id="pres-game">—</h2>
+                        <p id="pres-kid">—</p>
+                    </div>
+                </div>
+                <div id="pres-dots" class="pres-dots"></div>
+            </header>
+
+            <main id="pres-stage" class="pres-stage"></main>
+
+            <footer class="pres-footer">
+                <button id="pres-prev" class="ghost-btn">← Zurück</button>
+                <span id="pres-step-label" class="pres-step-label">Schritt 1 von 5</span>
+                <button id="pres-next" class="primary-btn">Weiter →</button>
+            </footer>
+        </section>
+    </div>
+
+    <!-- Wiederverwendete Engine aus dem Kurs -->
+    <script src="js/playlib.js"></script>
+    <script src="js/transpiler.js"></script>
+    <script src="js/levels.js"></script>
+    <!-- Präsentations-Inhalte + Logik -->
+    <script src="js/presentation-data.js"></script>
+    <script src="js/presentation.js"></script>
+</body>
+</html>

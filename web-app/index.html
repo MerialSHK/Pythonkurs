@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Python Spiele-Kurs</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <link rel="stylesheet" href="css/presentation.css" />
 </head>
 <body>
     <div id="app">
@@ -31,6 +32,10 @@
                 <p id="login-error" class="error hidden">Falsches Passwort. Versuch es nochmal.</p>
 
                 <p class="hint-bottom">Tipp für die Lehrkraft: Standard-Passwort ist <code>python</code></p>
+                <a class="pres-entry-link" href="presentation.html">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                    Abschlusspräsentation starten
+                </a>
             </div>
         </section>
 
@@ -49,6 +54,10 @@
                     <p id="progress-summary">0 / 5 Level abgeschlossen</p>
                 </div>
                 <div class="map-actions">
+                    <a id="open-presentation" class="primary-btn small" href="presentation.html" title="Abschlusspräsentation öffnen">
+                        <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 20 12 6 20 6 4"/></svg>
+                        Präsentation
+                    </a>
                     <button id="reset-progress" class="ghost-btn" title="Fortschritt zurücksetzen">Neu starten</button>
                     <button id="logout-button" class="ghost-btn">Abmelden</button>
                 </div>

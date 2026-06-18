@@ -1,0 +1,578 @@
+/* ================================================================
+   presentation.css — Präsentationsmodus für die Abschlusspräsentation
+   Baut auf den Variablen aus styles.css auf.
+   ================================================================ */
+
+:root {
+    --pres-accent: #4f6df5;
+}
+
+.presentation-body { overflow: auto; }
+
+#pres-app {
+    width: 100%;
+    min-height: 100vh;
+}
+
+.pres-screen { display: none; }
+.pres-screen.active { display: block; }
+
+/* ------------------------------------------------------------
+   ÜBERSICHT
+   ------------------------------------------------------------ */
+#overview-screen {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 28px 24px 64px;
+}
+
+.pres-overview-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+}
+
+.pres-brand {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+.pres-brand .brand-icon {
+    width: 46px;
+    height: 46px;
+    color: var(--primary);
+    flex-shrink: 0;
+}
+.pres-brand h1 {
+    margin: 0;
+    font-size: 28px;
+    letter-spacing: -0.02em;
+}
+.pres-subtitle {
+    margin: 2px 0 0;
+    color: var(--text-muted);
+    font-size: 15px;
+}
+
+.pres-howto {
+    background: var(--primary-soft);
+    border: 1px solid #d3ddfb;
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #2c3654;
+    margin-bottom: 30px;
+}
+.pres-step-chip {
+    display: inline-block;
+    background: #fff;
+    border: 1px solid #c9d4f7;
+    color: var(--primary-strong);
+    font-weight: 600;
+    font-size: 12.5px;
+    padding: 3px 10px;
+    border-radius: 999px;
+    margin: 3px 3px;
+}
+
+.pres-group-title {
+    font-size: 19px;
+    margin: 8px 0 16px;
+    letter-spacing: -0.01em;
+}
+.pres-group-title small {
+    font-weight: 400;
+    color: var(--text-muted);
+    font-size: 14px;
+}
+
+.pres-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(248px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+}
+
+.pres-card {
+    --accent: #4f6df5;
+    text-align: left;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+    position: relative;
+    overflow: hidden;
+}
+.pres-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 5px;
+    background: var(--accent);
+}
+.pres-card:hover {
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-lg);
+    border-color: var(--accent);
+}
+.pres-card-emoji {
+    font-size: 42px;
+    line-height: 1;
+}
+.pres-card-body { flex: 1; }
+.pres-card-game {
+    margin: 0 0 2px;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+}
+.pres-card-kid {
+    margin: 0 0 8px;
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 14px;
+}
+.pres-card-tagline {
+    margin: 0;
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+}
+.pres-card-go {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 14px;
+}
+
+/* ------------------------------------------------------------
+   PRÄSENTATION — Rahmen
+   ------------------------------------------------------------ */
+#pres-screen {
+    min-height: 100vh;
+    display: none;
+    flex-direction: column;
+}
+#pres-screen.active { display: flex; }
+
+.pres-header {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    padding: 14px 24px;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+}
+.pres-header-title {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex: 1;
+}
+.pres-header-emoji { font-size: 30px; }
+.pres-header-title h2 {
+    margin: 0;
+    font-size: 19px;
+    letter-spacing: -0.01em;
+}
+.pres-header-title p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+}
+
+.pres-dots {
+    display: flex;
+    gap: 9px;
+}
+.pres-dot {
+    width: 13px;
+    height: 13px;
+    border-radius: 50%;
+    background: var(--border-strong);
+    padding: 0;
+    transition: background .15s ease, transform .15s ease;
+}
+.pres-dot.active {
+    background: var(--pres-accent);
+    transform: scale(1.25);
+}
+.pres-dot.done { background: var(--success); }
+
+.pres-stage {
+    flex: 1;
+    overflow-y: auto;
+    padding: 30px 24px 40px;
+    display: flex;
+    justify-content: center;
+}
+
+.pres-panel {
+    width: 100%;
+    max-width: 860px;
+}
+
+.pres-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 14px 24px;
+    border-top: 1px solid var(--border);
+    background: var(--surface);
+    position: sticky;
+    bottom: 0;
+}
+.pres-step-label {
+    font-size: 14px;
+    color: var(--text-muted);
+    font-weight: 600;
+}
+.pres-footer .ghost-btn { min-width: 110px; }
+.pres-footer .primary-btn { min-width: 150px; justify-content: center; }
+
+/* „Das kannst du sagen"-Box ------------------------------------ */
+.pres-say {
+    background: var(--primary-soft);
+    border: 1px solid #d3ddfb;
+    border-left: 4px solid var(--pres-accent);
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    margin-top: 18px;
+}
+.pres-say-label {
+    display: block;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--primary-strong);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 6px;
+}
+.pres-say-text {
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.6;
+    color: #2c3654;
+    font-style: italic;
+}
+
+/* Schritt 1 — Titel -------------------------------------------- */
+.pres-title-panel {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.pres-title-emoji {
+    font-size: 90px;
+    line-height: 1;
+    margin-bottom: 8px;
+}
+.pres-title-game {
+    margin: 0;
+    font-size: 44px;
+    letter-spacing: -0.03em;
+    color: var(--pres-accent);
+}
+.pres-title-kid {
+    margin: 6px 0 0;
+    font-size: 17px;
+    color: var(--text-muted);
+}
+.pres-title-tagline {
+    margin: 14px 0 0;
+    font-size: 19px;
+    font-weight: 600;
+    max-width: 560px;
+}
+.pres-about {
+    margin: 22px 0 4px;
+    max-width: 620px;
+    text-align: left;
+}
+.pres-about p {
+    font-size: 16px;
+    line-height: 1.65;
+    color: var(--text);
+    margin: 0 0 10px;
+}
+
+.pres-howto-card {
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 16px 20px;
+    margin-top: 16px;
+    width: 100%;
+    max-width: 620px;
+    text-align: left;
+}
+.pres-howto-card h4 {
+    margin: 0 0 12px;
+    font-size: 15px;
+}
+.pres-howto-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.pres-howto-list li {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+.pres-key {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 46px;
+    height: 34px;
+    padding: 0 10px;
+    background: #fff;
+    border: 1px solid var(--border-strong);
+    border-bottom-width: 3px;
+    border-radius: 8px;
+    font-size: 17px;
+    font-weight: 600;
+    flex-shrink: 0;
+}
+.pres-key-text {
+    font-size: 15px;
+    color: var(--text);
+}
+
+/* Schritt 2 — Demo --------------------------------------------- */
+.pres-demo-panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 26px;
+    align-items: start;
+    max-width: 980px;
+}
+.pres-demo-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 14px;
+}
+.pres-canvas-box {
+    background: #fbfcfe;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-lg);
+    padding: 10px;
+    box-shadow: var(--shadow-md);
+}
+#pres-canvas {
+    display: block;
+    width: 100%;
+    max-width: 520px;
+    height: auto;
+    border-radius: 8px;
+    background: #fbfcfe;
+}
+.pres-demo-right h3 {
+    margin: 0 0 14px;
+    font-size: 20px;
+}
+.pres-demo-hint {
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.55;
+    margin: 14px 0 0;
+}
+
+/* Schritt 3 — Figuren ------------------------------------------ */
+.pres-panel-title {
+    margin: 0 0 6px;
+    font-size: 26px;
+    letter-spacing: -0.02em;
+}
+.pres-panel-lead {
+    margin: 0 0 22px;
+    font-size: 16px;
+    color: var(--text-muted);
+    line-height: 1.6;
+}
+.pres-sprite-list {
+    display: grid;
+    gap: 12px;
+}
+.pres-sprite-card {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 14px 18px;
+    box-shadow: var(--shadow-sm);
+}
+.pres-sprite-icon {
+    font-size: 30px;
+    width: 44px;
+    text-align: center;
+    flex-shrink: 0;
+}
+.pres-sprite-name {
+    display: inline-block;
+    background: var(--surface-soft);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 9px;
+    font-family: var(--mono);
+    font-size: 14px;
+    color: var(--primary-strong);
+    margin-bottom: 5px;
+}
+.pres-sprite-role {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.55;
+}
+
+/* Schritt 4 — Code --------------------------------------------- */
+.pres-code-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 18px 20px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow-sm);
+}
+.pres-code-head {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 12px;
+}
+.pres-code-num {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--pres-accent);
+    color: #fff;
+    font-weight: 700;
+    font-size: 15px;
+    flex-shrink: 0;
+}
+.pres-code-head h4 {
+    margin: 0;
+    font-size: 17px;
+}
+.pres-code {
+    background: #1f2330;
+    color: #e6ebf5;
+    border-radius: var(--radius-md);
+    padding: 14px 16px;
+    font-family: var(--mono);
+    font-size: 14px;
+    line-height: 1.6;
+    overflow-x: auto;
+    margin: 0 0 12px;
+    white-space: pre;
+}
+.pres-code-explain {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: var(--text);
+}
+.pres-code-block .pres-say { margin-top: 14px; }
+
+/* Schritt 5 — Abschluss ---------------------------------------- */
+.pres-finish-panel {
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.pres-finish-emoji {
+    font-size: 70px;
+    margin-bottom: 6px;
+}
+.pres-hard-card {
+    background: var(--success-soft);
+    border: 1px solid #c2e8d6;
+    border-radius: var(--radius-lg);
+    padding: 18px 22px;
+    max-width: 620px;
+    margin: 6px auto 8px;
+}
+.pres-hard-card p {
+    margin: 0;
+    font-size: 16.5px;
+    line-height: 1.65;
+}
+.pres-concepts-title {
+    margin: 26px 0 12px;
+    font-size: 18px;
+}
+.pres-concepts {
+    list-style: none;
+    padding: 0;
+    margin: 0 auto;
+    max-width: 560px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    text-align: left;
+}
+.pres-concepts li {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-md);
+    padding: 10px 16px 10px 40px;
+    font-size: 15px;
+    position: relative;
+}
+.pres-concepts li::before {
+    content: '✓';
+    position: absolute;
+    left: 16px;
+    color: var(--success);
+    font-weight: 700;
+}
+.pres-finish-panel .primary-btn { margin-top: 28px; }
+
+/* ------------------------------------------------------------
+   Einstiegslink auf der Login-Seite (index.html)
+   ------------------------------------------------------------ */
+.pres-entry-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 14px;
+    font-size: 13.5px;
+    font-weight: 600;
+    color: var(--primary);
+    text-decoration: none;
+}
+.pres-entry-link:hover { text-decoration: underline; }
+
+/* ------------------------------------------------------------
+   Responsiv
+   ------------------------------------------------------------ */
+@media (max-width: 760px) {
+    .pres-demo-panel { grid-template-columns: 1fr; }
+    .pres-title-game { font-size: 34px; }
+    .pres-title-emoji { font-size: 70px; }
+    .pres-header { flex-wrap: wrap; gap: 10px; }
+    .pres-dots { order: 3; width: 100%; justify-content: center; }
+    .pres-step-label { display: none; }
+}
